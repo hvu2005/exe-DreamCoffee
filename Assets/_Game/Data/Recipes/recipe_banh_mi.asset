@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2da6cb8e6e66ec94b8a5689fcab80796, type: 3}
+  m_Name: recipe_banh_mi
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.Data.RecipeData
+  recipeId: recipe_banh_mi
+  outputItem: {fileID: 11400000, guid: 784ebf5e9c119b94b8cae313d3bdd26a, type: 2}
+  requiredIngredientIds:
+  - ng_bot_mi
+  - ng_nhan
+  isUnlockedByDefault: 1
