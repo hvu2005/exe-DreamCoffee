@@ -5,13 +5,15 @@ namespace DreamCafe.Services.Customer
 {
     /// <summary>
     /// Customer lifecycle: timer-based spawning, seat/queue assignment, despawn.
-    /// Respects pool cap of 10. Raises CustomerSpawned / CustomerLeft events.
+    /// Tracks daily served/lost counts for DayEnded summary.
     /// </summary>
     public interface ICustomerService : IService
     {
-        int ActiveCustomerCount { get; }
-        int MaxCustomers { get; }
+        int ActiveCustomerCount  { get; }
+        int MaxCustomers         { get; }
         float SpawnIntervalSeconds { get; set; }
+        int DayCustomersServed   { get; }
+        int DayCustomersLost     { get; }
         void Tick(float dt);
         void SetSpawnPoint(Vector3 worldPos);
         void RegisterTable(ITable table);

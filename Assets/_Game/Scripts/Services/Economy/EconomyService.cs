@@ -5,34 +5,38 @@ using UnityEngine;
 namespace DreamCafe.Services.Economy
 {
     /// <summary>
-    /// Wallet and revenue tracking. Subscribes to PaymentReceived to accumulate balance automatically.
-    /// Starting balance 500 VND * 1000 = 500k for prototype tuning.
-    /// TODO Phase 3: add Opex deductions (salary, restock), transaction log, soft-lock safety net.
+    /// Wallet and revenue tracking. Auto-accumulates from PaymentReceived.
+    /// DayRevenue resets on DayStarted so the daily summary in DayEnded is accurate.
     /// </summary>
     public sealed class EconomyService : IEconomyService
     {
         private IEventBus _events;
 
-        public float Balance { get; private set; } = 500_000f;
+        public float Balance      { get; private set; } = 500_000f;
         public float TotalRevenue { get; private set; }
+        public float DayRevenue   { get; private set; }
 
         public void Init(ServiceContext ctx)
         {
             _events = ctx.Events;
             _events.Subscribe<PaymentReceived>(OnPaymentReceived);
+            _events.Subscribe<DayStarted>(OnDayStarted);
             Debug.Log($"[EconomyService] Initialized. Starting balance: {Balance:N0}đ");
         }
 
         public void Shutdown()
         {
             _events?.Unsubscribe<PaymentReceived>(OnPaymentReceived);
+            _events?.Unsubscribe<DayStarted>(OnDayStarted);
             Debug.Log("[EconomyService] Shutdown.");
         }
 
         public void AddRevenue(float baseAmount, float tip = 0f)
         {
-            Balance += baseAmount + tip;
-            TotalRevenue += baseAmount + tip;
+            var total   = baseAmount + tip;
+            Balance     += total;
+            TotalRevenue += total;
+            DayRevenue  += total;
         }
 
         public bool SpendMoney(float amount)
@@ -44,10 +48,13 @@ namespace DreamCafe.Services.Economy
 
         private void OnPaymentReceived(PaymentReceived evt)
         {
-            var total = evt.BaseAmount + evt.Tip;
-            Balance += total;
+            var total    = evt.BaseAmount + evt.Tip;
+            Balance      += total;
             TotalRevenue += total;
-            Debug.Log($"[EconomyService] +{total:N0}đ (tip:{evt.Tip:N0}). Balance: {Balance:N0}đ");
+            DayRevenue   += total;
+            Debug.Log($"[EconomyService] +{total:N0}đ (tip {evt.Tip:N0}đ). Balance: {Balance:N0}đ | Day: {DayRevenue:N0}đ");
         }
+
+        private void OnDayStarted(DayStarted _) => DayRevenue = 0f;
     }
 }

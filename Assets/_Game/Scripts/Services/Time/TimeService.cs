@@ -1,5 +1,7 @@
 using DreamCafe.Core.EventBus;
 using DreamCafe.Core.Services;
+using DreamCafe.Services.Customer;
+using DreamCafe.Services.Economy;
 using UnityEngine;
 
 namespace DreamCafe.Services.Time
@@ -7,11 +9,12 @@ namespace DreamCafe.Services.Time
     /// <summary>
     /// Tracks in-game day cycle. 3 minutes real-time = 1 game day (configurable via DayLengthSeconds).
     /// Tick() must be called from GameBootstrap.Update() for deterministic timing.
-    /// TODO Phase 3: populate DayEnded summary fields from EconomyService/CustomerService.
+    /// On DayEnded, lazily resolves EconomyService + CustomerService for the daily summary.
     /// </summary>
     public sealed class TimeService : ITimeService
     {
         private IEventBus _events;
+        private ServiceContext _ctx;
         private float _elapsed;
 
         public int CurrentDay { get; private set; }
@@ -21,6 +24,7 @@ namespace DreamCafe.Services.Time
 
         public void Init(ServiceContext ctx)
         {
+            _ctx    = ctx;
             _events = ctx.Events;
             Debug.Log("[TimeService] Initialized. Day length: 180s.");
         }
@@ -34,7 +38,7 @@ namespace DreamCafe.Services.Time
         public void StartDay()
         {
             CurrentDay++;
-            _elapsed = 0f;
+            _elapsed     = 0f;
             IsDayRunning = true;
             _events.Publish(new DayStarted(CurrentDay));
             Debug.Log($"[TimeService] Day {CurrentDay} started.");
@@ -47,9 +51,26 @@ namespace DreamCafe.Services.Time
             if (_elapsed >= DayLengthSeconds)
             {
                 IsDayRunning = false;
-                _events.Publish(new DayEnded(CurrentDay, 0f, 0, 0));
-                Debug.Log($"[TimeService] Day {CurrentDay} ended.");
+                PublishDayEnded();
             }
+        }
+
+        private void PublishDayEnded()
+        {
+            float revenue       = 0f;
+            int served          = 0;
+            int lost            = 0;
+
+            if (_ctx.Services.TryResolve<IEconomyService>(out var economy))
+                revenue = economy.DayRevenue;
+            if (_ctx.Services.TryResolve<ICustomerService>(out var customers))
+            {
+                served = customers.DayCustomersServed;
+                lost   = customers.DayCustomersLost;
+            }
+
+            _events.Publish(new DayEnded(CurrentDay, revenue, served, lost));
+            Debug.Log($"[TimeService] Day {CurrentDay} ended — {revenue:N0}đ, {served} served, {lost} lost.");
         }
     }
 }

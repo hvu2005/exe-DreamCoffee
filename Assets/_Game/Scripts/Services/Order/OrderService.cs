@@ -2,19 +2,20 @@ using System.Collections.Generic;
 using DreamCafe.Core.EventBus;
 using DreamCafe.Core.Services;
 using DreamCafe.Data;
+using DreamCafe.Gameplay.Tipping;
 using UnityEngine;
 
 namespace DreamCafe.Services.Order
 {
     /// <summary>
-    /// Creates, tracks, and serves orders. On PlaceOrder → OrderPlaced; on ServeOrder → OrderServed → PaymentReceived.
-    /// Phase 0: functional but tip is always 0; Phase 3 integrates ITipStrategy and reputation.
-    /// TODO Phase 2: hook ItemCrafted to auto-match open orders.
+    /// Creates, tracks, and closes orders. Raises OrderPlaced / OrderServed / PaymentReceived.
+    /// Phase 3: ServeOrder computes tip via BaseTipStrategy (0.5f patience estimate — Phase 4 refines).
     /// </summary>
     public sealed class OrderService : IOrderService
     {
         private IEventBus _events;
-        private readonly Dictionary<string, OrderData> _orders = new();
+        private readonly Dictionary<string, OrderData> _orders       = new();
+        private readonly List<string>                  _pendingQueue = new();
         private int _orderCounter;
 
         public int OpenOrderCount { get; private set; }
@@ -28,33 +29,74 @@ namespace DreamCafe.Services.Order
         public void Shutdown()
         {
             _orders.Clear();
+            _pendingQueue.Clear();
             OpenOrderCount = 0;
             Debug.Log("[OrderService] Shutdown.");
         }
 
-        public string PlaceOrder(string customerId, string itemId)
+        public string PlaceOrder(string customerId, string itemId, float basePrice, CustomerType customerType)
         {
             var orderId = $"order_{++_orderCounter}";
-            var order = new OrderData(orderId, customerId, itemId, OrderStatus.Pending);
+            var order   = new OrderData(orderId, customerId, itemId, OrderStatus.Pending, basePrice, customerType);
             _orders[orderId] = order;
+            _pendingQueue.Add(orderId);
             OpenOrderCount++;
             _events.Publish(new OrderPlaced(orderId, customerId, itemId));
-            Debug.Log($"[OrderService] Order placed: {orderId} ({itemId})");
+            Debug.Log($"[OrderService] Placed: {orderId} ({itemId}, {basePrice:N0}đ)");
             return orderId;
+        }
+
+        public void MarkCrafted(string orderId)
+        {
+            if (!_orders.TryGetValue(orderId, out var order)) return;
+            _pendingQueue.Remove(orderId);
+            _orders[orderId] = order.WithStatus(OrderStatus.Ready);
+            Debug.Log($"[OrderService] Crafted: {orderId}");
         }
 
         public void ServeOrder(string orderId)
         {
             if (!_orders.TryGetValue(orderId, out var order)) return;
-            _orders[orderId] = order.WithStatus(OrderStatus.Served);
-            OpenOrderCount = Mathf.Max(0, OpenOrderCount - 1);
+            if (order.Status != OrderStatus.Ready) return;
 
+            _orders[orderId] = order.WithStatus(OrderStatus.Served);
+            OpenOrderCount   = Mathf.Max(0, OpenOrderCount - 1);
+
+            // Phase 3: tip with 0.5f patience estimate; Phase 4 passes real patience from customer
+            var tip = new BaseTipStrategy().ComputeTip(order.BasePrice, 0.5f, order.CustomerType);
             _events.Publish(new OrderServed(orderId, order.CustomerId));
-            _events.Publish(new PaymentReceived(order.CustomerId, order.BasePrice, 0f));
-            Debug.Log($"[OrderService] Order served: {orderId}");
+            _events.Publish(new PaymentReceived(order.CustomerId, order.BasePrice, tip));
+            Debug.Log($"[OrderService] Served: {orderId} — base {order.BasePrice:N0}đ + tip {tip:N0}đ");
         }
 
         public bool TryGetOrder(string orderId, out OrderData order) =>
             _orders.TryGetValue(orderId, out order);
+
+        public bool TryGetOldestPending(out OrderData order)
+        {
+            while (_pendingQueue.Count > 0)
+            {
+                var id = _pendingQueue[0];
+                if (_orders.TryGetValue(id, out order) && order.Status == OrderStatus.Pending)
+                    return true;
+                _pendingQueue.RemoveAt(0);
+            }
+            order = default;
+            return false;
+        }
+
+        public bool TryGetReadyOrderForCustomer(string customerId, out OrderData order)
+        {
+            foreach (var kvp in _orders)
+            {
+                if (kvp.Value.CustomerId == customerId && kvp.Value.Status == OrderStatus.Ready)
+                {
+                    order = kvp.Value;
+                    return true;
+                }
+            }
+            order = default;
+            return false;
+        }
     }
 }

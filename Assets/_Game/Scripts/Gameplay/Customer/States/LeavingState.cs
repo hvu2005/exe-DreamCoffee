@@ -18,7 +18,7 @@ namespace DreamCafe.Gameplay.Customer.States
             owner.View.ShowPatienceBar(false);
 
             var m = owner.Model;
-            bool wasSatisfied = m.Patience01 > 0f;
+            bool wasSatisfied = m.WasSatisfied || m.Patience01 > 0f;
             m.Emotion = m.ComputeEmotion();
 
             owner.Context.Events.Publish(new CustomerLeft(

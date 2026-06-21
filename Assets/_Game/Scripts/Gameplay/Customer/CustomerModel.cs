@@ -22,6 +22,17 @@ namespace DreamCafe.Gameplay.Customer
         public IPatienceStrategy PatienceStrategy;
         public float ReputationFactor = 1f;
 
+        // Phase 2 — order
+        public string PendingOrderId;
+        public string OrderItemId;
+        public float AutoOrderDelay = 3f;
+        public float AutoOrderTimer;
+
+        // Phase 2 — eating
+        public float EatDuration = 5f;
+        public float EatTimer;
+        public bool WasSatisfied;
+
         public bool PatienceDepleted => Patience01 <= 0f;
 
         public void TickPatience(float dt) =>
@@ -38,6 +49,11 @@ namespace DreamCafe.Gameplay.Customer
             Emotion = CustomerEmotion.Neutral;
             AssignedTableIndex = -1;
             State = CustomerState.Idle;
+            PendingOrderId = null;
+            OrderItemId = null;
+            AutoOrderTimer = AutoOrderDelay;
+            EatTimer = 0f;
+            WasSatisfied = false;
         }
     }
 }

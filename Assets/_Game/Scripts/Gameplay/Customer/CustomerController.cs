@@ -1,3 +1,5 @@
+using System;
+using DreamCafe.Core.EventBus;
 using DreamCafe.Core.MVC;
 using DreamCafe.Core.Pooling;
 using DreamCafe.Core.Services;
@@ -22,6 +24,9 @@ namespace DreamCafe.Gameplay.Customer
         public CustomerView  View  { get; private set; }
         public CustomerStateMachine FSM { get; private set; }
         public ServiceContext Context => Ctx;
+
+        /// <summary>Exposes protected Subscribe&lt;T&gt; to states (which are not subclasses).</summary>
+        public void AddSubscription<T>(Action<T> handler) where T : IEvent => Subscribe<T>(handler);
 
         private void Awake()
         {

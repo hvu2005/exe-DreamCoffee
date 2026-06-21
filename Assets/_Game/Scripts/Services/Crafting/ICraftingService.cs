@@ -3,12 +3,13 @@ using DreamCafe.Core.Services;
 namespace DreamCafe.Services.Crafting
 {
     /// <summary>
-    /// Tap-to-complete crafting. Validates recipe via IRecipeRepository, raises ItemCrafted instantly.
-    /// No progress bar — single tap = item complete (Manager Energy mechanic dropped permanently).
-    /// TODO Phase 2: integrate IRecipeRepository, IInventoryService ingredient check.
+    /// Tap-to-complete crafting. A single tap on a station = oldest pending order instantly crafted.
+    /// No progress bar, no energy (dropped permanently).
     /// </summary>
     public interface ICraftingService : IService
     {
-        bool TryCraft(string stationId, string itemId, string orderId);
+        bool TryCraft(string stationId);
+        void RegisterStation(ICraftingStation station);
+        void UnregisterStation(ICraftingStation station);
     }
 }

@@ -10,14 +10,15 @@ namespace DreamCafe.Services.Customer
 {
     /// <summary>
     /// Timer-based customer spawning; dine-in/takeaway routing; pool lifecycle management.
-    /// Enforces 10-customer active cap. Raises CustomerSpawned / CustomerLeft.
-    /// Seats are assigned from the registered ITable list; takeaway uses a world-space queue offset.
+    /// Enforces 10-customer active cap. Tracks daily served/lost counts for DayEnded summary.
     /// </summary>
     public sealed class CustomerService : ICustomerService
     {
-        public int ActiveCustomerCount { get; private set; }
-        public int MaxCustomers => 10;
+        public int ActiveCustomerCount  { get; private set; }
+        public int MaxCustomers         => 10;
         public float SpawnIntervalSeconds { get; set; } = 8f;
+        public int DayCustomersServed   { get; private set; }
+        public int DayCustomersLost     { get; private set; }
 
         private ServiceContext _ctx;
         private IEventBus _events;
@@ -27,18 +28,22 @@ namespace DreamCafe.Services.Customer
         private CustomerRoster _roster;
         private readonly List<ITable> _tables = new();
 
-        private const float TakeawayChance = 0.2f;
+        private const float TakeawayChance      = 0.2f;
         private const float TakeawayQueueSpacing = 0.7f;
 
         public void Init(ServiceContext ctx)
         {
-            _ctx = ctx;
+            _ctx    = ctx;
             _events = ctx.Events;
+            _events.Subscribe<CustomerLeft>(OnCustomerLeft);
+            _events.Subscribe<DayStarted>(OnDayStarted);
             Debug.Log("[CustomerService] Initialized. Spawn interval: 8s.");
         }
 
         public void Shutdown()
         {
+            _events?.Unsubscribe<CustomerLeft>(OnCustomerLeft);
+            _events?.Unsubscribe<DayStarted>(OnDayStarted);
             _tables.Clear();
             ActiveCustomerCount = 0;
             Debug.Log("[CustomerService] Shutdown.");
@@ -73,6 +78,18 @@ namespace DreamCafe.Services.Customer
             }
         }
 
+        private void OnCustomerLeft(CustomerLeft evt)
+        {
+            if (evt.WasSatisfied) DayCustomersServed++;
+            else                  DayCustomersLost++;
+        }
+
+        private void OnDayStarted(DayStarted _)
+        {
+            DayCustomersServed = 0;
+            DayCustomersLost   = 0;
+        }
+
         private void TrySpawnCustomer()
         {
             if (_roster == null)
@@ -84,32 +101,29 @@ namespace DreamCafe.Services.Customer
                 return;
             }
 
-            var data = _roster.customers[Random.Range(0, _roster.customers.Length)];
+            var data      = _roster.customers[Random.Range(0, _roster.customers.Length)];
             bool isTakeaway = Random.value < TakeawayChance;
 
             if (!isTakeaway)
             {
                 var table = FindFreeTable();
                 if (table == null) return;
-
-                SpawnCustomer(data, false, table, null);
+                SpawnCustomer(data, false, table);
             }
             else
             {
-                SpawnCustomer(data, true, null, null);
+                SpawnCustomer(data, true, null);
             }
         }
 
-        private void SpawnCustomer(CustomerData data, bool isTakeaway, ITable table, Transform parent)
+        private void SpawnCustomer(CustomerData data, bool isTakeaway, ITable table)
         {
-            // Spawn as ControllerBase (Core) to avoid Services→Gameplay dependency;
-            // cast to ICustomerSpawnable (Services) for initialization.
-            var baseCtrl = _ctx.Pool.Spawn<ControllerBase>(PoolKey.Customer, _spawnPoint, Quaternion.identity, parent);
+            var baseCtrl = _ctx.Pool.Spawn<ControllerBase>(PoolKey.Customer, _spawnPoint, Quaternion.identity);
             if (baseCtrl == null) return;
 
             if (baseCtrl is not ICustomerSpawnable spawnable)
             {
-                Debug.LogError("[CustomerService] CustomerPrefab root component does not implement ICustomerSpawnable.");
+                Debug.LogError("[CustomerService] CustomerPrefab does not implement ICustomerSpawnable.");
                 return;
             }
 

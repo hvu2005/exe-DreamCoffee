@@ -1,10 +1,12 @@
 using DreamCafe.Core.Services;
+using DreamCafe.Data;
 using DreamCafe.Services.Crafting;
 using DreamCafe.Services.Customer;
 using DreamCafe.Services.Economy;
 using DreamCafe.Services.Order;
 using DreamCafe.Services.Stubs;
 using DreamCafe.Services.Time;
+using UnityEngine;
 
 namespace DreamCafe.App
 {
@@ -17,6 +19,15 @@ namespace DreamCafe.App
     {
         public static void Install(ServiceManager manager)
         {
+            // Recipe repository — loaded from Resources/RecipeRepository.asset (created by Create Demo Assets)
+            var recipeRepo = Resources.Load<ScriptableRecipeRepository>("RecipeRepository");
+            if (recipeRepo == null)
+            {
+                Debug.LogWarning("[ServiceInstaller] RecipeRepository not found — run Tools > DreamCafé > Create Demo Assets.");
+                recipeRepo = ScriptableObject.CreateInstance<ScriptableRecipeRepository>();
+            }
+            manager.Register<IRecipeRepository>(recipeRepo);
+
             // Core services — must init before dependents
             manager.Register<ITimeService>(new TimeService());
             manager.Register<IEconomyService>(new EconomyService());

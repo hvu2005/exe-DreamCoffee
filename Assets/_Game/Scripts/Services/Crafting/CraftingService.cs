@@ -1,33 +1,53 @@
+using System.Collections.Generic;
 using DreamCafe.Core.EventBus;
 using DreamCafe.Core.Services;
+using DreamCafe.Services.Order;
 using UnityEngine;
 
 namespace DreamCafe.Services.Crafting
 {
     /// <summary>
-    /// Tap-to-complete crafting. A single player tap = item instantly crafted (no progress bar or energy).
-    /// Publishes ItemCrafted; OrderService listens to match open orders.
-    /// TODO Phase 2: inject IRecipeRepository to validate recipes; inject IInventoryService to consume ingredients.
+    /// Instant tap-to-craft. TryCraft pops the oldest Pending order, marks it Crafted,
+    /// and publishes ItemCrafted. CraftingStationController calls TryCraft on player tap.
     /// </summary>
     public sealed class CraftingService : ICraftingService
     {
         private IEventBus _events;
+        private ServiceContext _ctx;
+        private readonly List<ICraftingStation> _stations = new();
 
         public void Init(ServiceContext ctx)
         {
+            _ctx    = ctx;
             _events = ctx.Events;
             Debug.Log("[CraftingService] Initialized.");
         }
 
         public void Shutdown()
         {
+            _stations.Clear();
             Debug.Log("[CraftingService] Shutdown.");
         }
 
-        public bool TryCraft(string stationId, string itemId, string orderId)
+        public void RegisterStation(ICraftingStation station)
         {
-            _events.Publish(new ItemCrafted(itemId, stationId, orderId));
-            Debug.Log($"[CraftingService] Crafted '{itemId}' at station '{stationId}'");
+            if (!_stations.Contains(station)) _stations.Add(station);
+        }
+
+        public void UnregisterStation(ICraftingStation station) => _stations.Remove(station);
+
+        public bool TryCraft(string stationId)
+        {
+            var orderService = _ctx.Services.Resolve<IOrderService>();
+            if (!orderService.TryGetOldestPending(out var order))
+            {
+                Debug.Log($"[CraftingService] No pending orders for station '{stationId}'.");
+                return false;
+            }
+
+            orderService.MarkCrafted(order.OrderId);
+            _events.Publish(new ItemCrafted(order.ItemId, stationId, order.OrderId));
+            Debug.Log($"[CraftingService] Crafted '{order.ItemId}' at '{stationId}' → order {order.OrderId}");
             return true;
         }
     }

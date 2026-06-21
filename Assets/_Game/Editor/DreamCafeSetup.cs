@@ -35,8 +35,8 @@ namespace DreamCafe.Editor
             var du_khach     = CreateCustomer("cus_du_khach",      "Du khách",        CustomerType.Tourist, 30f, 40000f,  80000f,  0.6f, "Customers/cus_du_khach");
             var vip          = CreateCustomer("cus_vip",           "Khách VIP",       CustomerType.VIP,     60f, 80000f, 200000f,  0.9f, "Customers/cus_vip");
 
-            CreateRecipeRepository("Recipes/RecipeRepository");
             CreateCustomerRoster(new[] { sinh_vien, van_phong, du_khach, vip });
+            CreateRecipeRepository(new[] { caPheD, traSua, banhMi });
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -127,13 +127,28 @@ namespace DreamCafe.Editor
             AssetDatabase.CreateAsset(so, full);
         }
 
-        private static void CreateRecipeRepository(string assetPath)
+        private static void CreateRecipeRepository(ItemData[] items)
         {
-            var full = $"{DataPath}/{assetPath}.asset";
-            if (AssetDatabase.LoadAssetAtPath<ScriptableRecipeRepository>(full) != null) return;
+            var full = $"{ResourcePath}/RecipeRepository.asset";
+
+            // Collect the 3 corresponding RecipeData assets
+            var recipes = new RecipeData[items.Length];
+            string[] recipeNames = { "recipe_caphe_den", "recipe_tra_sua", "recipe_banh_mi" };
+            for (int i = 0; i < items.Length && i < recipeNames.Length; i++)
+                recipes[i] = AssetDatabase.LoadAssetAtPath<RecipeData>($"{DataPath}/Recipes/{recipeNames[i]}.asset");
+
+            var existing = AssetDatabase.LoadAssetAtPath<ScriptableRecipeRepository>(full);
+            if (existing != null)
+            {
+                existing.SetRecipes(recipes);
+                EditorUtility.SetDirty(existing);
+                return;
+            }
+
             var so = ScriptableObject.CreateInstance<ScriptableRecipeRepository>();
+            so.SetRecipes(recipes);
             AssetDatabase.CreateAsset(so, full);
-            Debug.Log($"[DreamCafeSetup] RecipeRepository created — open it to assign the 3 recipes, or re-run setup.");
+            Debug.Log($"[DreamCafeSetup] ✓ RecipeRepository created at Resources/ with {recipes.Length} recipes.");
         }
 
         private static Color GetTypeColor(CustomerType type) => type switch

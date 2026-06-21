@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be5db2debd459184fbbe870bccef058f, type: 3}
+  m_Name: CustomerRoster
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.Data.CustomerRoster
+  customers:
+  - {fileID: 11400000, guid: 44fadd7f9db75c0458765d3a0ebe46ef, type: 2}
+  - {fileID: 11400000, guid: 61586e103c0186a4d941019095a7e2dd, type: 2}
+  - {fileID: 11400000, guid: 6e4df173d5b232f41a7453ef79f912ea, type: 2}
+  - {fileID: 11400000, guid: 0312935ff1a7eef4398691fae29c8d8e, type: 2}

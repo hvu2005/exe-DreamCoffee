@@ -4,15 +4,17 @@ using DreamCafe.Data;
 namespace DreamCafe.Services.Order
 {
     /// <summary>
-    /// Order lifecycle: creation, tracking, serving, tip calculation.
+    /// Order lifecycle: creation, crafting acknowledgement, serving, payment.
     /// Raises OrderPlaced, OrderServed, PaymentReceived events.
-    /// TODO Phase 2: hook into CraftingService for ItemCrafted matching.
     /// </summary>
     public interface IOrderService : IService
     {
-        string PlaceOrder(string customerId, string itemId);
+        int OpenOrderCount { get; }
+        string PlaceOrder(string customerId, string itemId, float basePrice, CustomerType customerType);
+        void MarkCrafted(string orderId);
         void ServeOrder(string orderId);
         bool TryGetOrder(string orderId, out OrderData order);
-        int OpenOrderCount { get; }
+        bool TryGetOldestPending(out OrderData order);
+        bool TryGetReadyOrderForCustomer(string customerId, out OrderData order);
     }
 }

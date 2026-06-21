@@ -12,6 +12,7 @@ namespace DreamCafe.Data
     public enum OrderStatus     { Pending, Crafting, Ready, Served, Cancelled }
     public enum ItemType        { Drink, Food }
     public enum ItemCategory    { Coffee, Tea, Juice, Pastry, Bread, Snack }
+    public enum CraftingStationStatus { Idle, Ready }
     public enum StaffRole       { Cashier, Barista, Baker, Waiter, Cleaner }
     public enum CafeStyle       { Vintage, Modern, Study, Instagram, Movie, CatCafe, Cyberpunk, Acoustic }
     public enum EventType
