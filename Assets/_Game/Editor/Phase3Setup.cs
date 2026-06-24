@@ -1,3 +1,4 @@
+using DreamCafe.Gameplay.CraftingStation;
 using DreamCafe.Gameplay.Table;
 using UnityEditor;
 using UnityEngine;
@@ -36,8 +37,10 @@ namespace DreamCafe.Editor
             }
 
             int tappableLayer = GetOrCreateTappableLayer();
-            int added         = 0;
+            int tablesAdded   = 0;
+            int stationsSet   = 0;
 
+            // ── Tables: add collider + set layer ────────────────────────────
             foreach (var table in tables)
             {
                 Undo.RecordObject(table.gameObject, "Phase3 — Add Table BoxCollider2D");
@@ -46,7 +49,7 @@ namespace DreamCafe.Editor
                 {
                     var col  = Undo.AddComponent<BoxCollider2D>(table.gameObject);
                     col.size = new Vector2(1f, 1f);
-                    added++;
+                    tablesAdded++;
                     Debug.Log($"[Phase3Setup] BoxCollider2D added to {table.name}.");
                 }
 
@@ -54,15 +57,39 @@ namespace DreamCafe.Editor
                     table.gameObject.layer = tappableLayer;
             }
 
+            // ── Crafting stations: set layer on scene instances ──────────────
+            var stations = Object.FindObjectsByType<CraftingStationController>(FindObjectsSortMode.None);
+            foreach (var station in stations)
+            {
+                Undo.RecordObject(station.gameObject, "Phase3 — Set Station Tappable Layer");
+
+                if (station.GetComponent<Collider2D>() == null)
+                {
+                    var col  = Undo.AddComponent<BoxCollider2D>(station.gameObject);
+                    col.size = new Vector2(1.5f, 1f);
+                    Debug.Log($"[Phase3Setup] BoxCollider2D added to {station.name} (was missing).");
+                }
+
+                if (tappableLayer >= 0)
+                {
+                    station.gameObject.layer = tappableLayer;
+                    stationsSet++;
+                    Debug.Log($"[Phase3Setup] Layer 'Tappable' set on {station.name}.");
+                }
+            }
+
+            // ── Patch prefab asset so future instances inherit the layer ─────
+            if (tappableLayer >= 0)
+                PatchCraftingStationPrefab(tappableLayer);
+
             UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(
                 UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene());
 
             EditorUtility.DisplayDialog(
                 "DreamCafé — Phase 3 Scene",
                 $"Done!\n\n" +
-                $"• {tables.Length} table(s) found.\n" +
-                $"• BoxCollider2D added to {added} table(s).\n" +
-                $"• Layer set to \"Tappable\" on all tables.\n\n" +
+                $"• {tables.Length} table(s) → BoxCollider2D added to {tablesAdded}, all set to Tappable layer.\n" +
+                $"• {stations.Length} crafting station(s) → {stationsSet} set to Tappable layer.\n\n" +
                 "Save the scene (Ctrl+S) then press Play.\n\n" +
                 "Full loop test:\n" +
                 "  1. Wait ~8s → customer spawns → walks to seat.\n" +
@@ -72,6 +99,22 @@ namespace DreamCafe.Editor
                 "  5. Customer leaves → Economy balance increases.\n" +
                 "  6. Console: [OrderService] PaymentReceived logged.",
                 "OK");
+        }
+
+        private static void PatchCraftingStationPrefab(int tappableLayer)
+        {
+            const string prefabPath = "Assets/_Game/Prefabs/CraftingStationPrefab.prefab";
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            if (prefab == null)
+            {
+                Debug.Log("[Phase3Setup] CraftingStationPrefab not found — skipping prefab patch.");
+                return;
+            }
+
+            using var scope = new PrefabUtility.EditPrefabContentsScope(prefabPath);
+            var root = scope.prefabContentsRoot;
+            root.layer = tappableLayer;
+            Debug.Log($"[Phase3Setup] CraftingStationPrefab layer set to 'Tappable' in prefab asset.");
         }
 
         private static int GetOrCreateTappableLayer()

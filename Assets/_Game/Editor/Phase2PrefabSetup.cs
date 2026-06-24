@@ -173,6 +173,10 @@ namespace DreamCafe.Editor
             var col    = root.AddComponent<BoxCollider2D>();
             col.size   = new Vector2(1.5f, 1f);
 
+            // Set Tappable layer now if it already exists; Phase3Setup patches it otherwise.
+            int tappableLayer = LayerMask.NameToLayer("Tappable");
+            if (tappableLayer >= 0) root.layer = tappableLayer;
+
             // Body — beige square (the counter surface)
             var bodyGO = new GameObject("Body");
             bodyGO.transform.SetParent(root.transform, false);
