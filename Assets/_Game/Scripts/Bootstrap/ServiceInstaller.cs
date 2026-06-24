@@ -6,6 +6,7 @@ using DreamCafe.Services.Economy;
 using DreamCafe.Services.Order;
 using DreamCafe.Services.Stubs;
 using DreamCafe.Services.Time;
+using DreamCafe.Services.Upgrade;
 using UnityEngine;
 
 namespace DreamCafe.App
@@ -43,6 +44,7 @@ namespace DreamCafe.App
             manager.Register<ISoundService>(new SoundService());
             manager.Register<IAnalyticsService>(new AnalyticsService());
             manager.Register<ISaveService>(new SaveService());
+            manager.Register<IUpgradeService>(new UpgradeService());
         }
     }
 }

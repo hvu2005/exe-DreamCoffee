@@ -48,6 +48,10 @@ namespace DreamCafe.Gameplay.Customer
             Model.IsTakeaway = isTakeaway;
             Model.PatienceStrategy = new LinearPatienceStrategy(data.patienceSeconds);
 
+            // Apply patience bonus from Cozy Vibes upgrade (ReputationFactor slows patience drain).
+            if (ctx.Services.TryResolve<DreamCafe.Services.Upgrade.IUpgradeService>(out var upgrades))
+                Model.ReputationFactor = upgrades.PatienceMultiplier;
+
             View.Render(Model);
             View.PlaySpawnAnim();
             FSM.Enter(WaitingForSeatState.Instance);

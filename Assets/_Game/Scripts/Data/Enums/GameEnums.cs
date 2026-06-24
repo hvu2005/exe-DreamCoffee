@@ -18,6 +18,15 @@ namespace DreamCafe.Data
     public enum EventType
     {
         CustomerSpawned, OrderPlaced, ItemCrafted, OrderServed,
-        PaymentReceived, CustomerLeft, DayStarted, DayEnded
+        PaymentReceived, CustomerLeft, DayStarted, DayEnded,
+        UpgradePurchased
+    }
+
+    public enum UpgradeEffect
+    {
+        SpawnInterval,     // overrides ICustomerService.SpawnIntervalSeconds
+        DayLength,         // overrides ITimeService.DayLengthSeconds
+        TipMultiplier,     // multiplies tip in OrderService.ServeOrder
+        PatienceMultiplier // scales CustomerModel.ReputationFactor on spawn
     }
 }

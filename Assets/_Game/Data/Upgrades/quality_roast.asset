@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f61aea671361170418ca982d23580ea0, type: 3}
+  m_Name: quality_roast
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.Data.UpgradeData
+  upgradeId: quality_roast
+  displayName: Quality Roast
+  description: Premium ingredients boost tip amount per served order.
+  effectType: 2
+  baseCost: 500
+  costMultiplier: 1.6
+  maxLevel: 3
+  effectValues:
+  - 1.25
+  - 1.5
+  - 2

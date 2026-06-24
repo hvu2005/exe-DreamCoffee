@@ -13,7 +13,8 @@ namespace DreamCafe.Services.Order
     /// </summary>
     public sealed class OrderService : IOrderService
     {
-        private IEventBus _events;
+        private ServiceContext                         _ctx;
+        private IEventBus                              _events;
         private readonly Dictionary<string, OrderData> _orders       = new();
         private readonly List<string>                  _pendingQueue = new();
         private int _orderCounter;
@@ -22,6 +23,7 @@ namespace DreamCafe.Services.Order
 
         public void Init(ServiceContext ctx)
         {
+            _ctx    = ctx;
             _events = ctx.Events;
             Debug.Log("[OrderService] Initialized.");
         }
@@ -62,11 +64,14 @@ namespace DreamCafe.Services.Order
             _orders[orderId] = order.WithStatus(OrderStatus.Served);
             OpenOrderCount   = Mathf.Max(0, OpenOrderCount - 1);
 
-            // Phase 3: tip with 0.5f patience estimate; Phase 4 passes real patience from customer
-            var tip = new BaseTipStrategy().ComputeTip(order.BasePrice, 0.5f, order.CustomerType);
+            float tipMultiplier = 1f;
+            if (_ctx.Services.TryResolve<DreamCafe.Services.Upgrade.IUpgradeService>(out var us))
+                tipMultiplier = us.TipMultiplier;
+
+            var tip = new BaseTipStrategy().ComputeTip(order.BasePrice, 0.5f, order.CustomerType) * tipMultiplier;
             _events.Publish(new OrderServed(orderId, order.CustomerId));
             _events.Publish(new PaymentReceived(order.CustomerId, order.BasePrice, tip));
-            Debug.Log($"[OrderService] Served: {orderId} — base {order.BasePrice:N0}đ + tip {tip:N0}đ");
+            Debug.Log($"[OrderService] Served: {orderId} — base {order.BasePrice:N0}đ + tip {tip:N0}đ (x{tipMultiplier:F2} mult)");
         }
 
         public bool TryGetOrder(string orderId, out OrderData order) =>

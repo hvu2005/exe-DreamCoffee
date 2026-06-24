@@ -10,6 +10,7 @@ using DreamCafe.Services.Customer;
 using DreamCafe.Services.Stubs;
 using DreamCafe.Services.Time;
 using DreamCafe.UI.Hud;
+using DreamCafe.UI.Shop;
 using UnityEngine;
 
 namespace DreamCafe.App
@@ -122,6 +123,10 @@ namespace DreamCafe.App
             // HUD subscribes to economy/customer/time events
             foreach (var h in FindObjectsByType<HudController>(FindObjectsSortMode.None))
                 h.Bind(ctx);
+
+            // Upgrade shop subscribes to DayEnded, UpgradePurchased
+            foreach (var s in FindObjectsByType<UpgradeShopController>(FindObjectsSortMode.None))
+                s.Bind(ctx);
         }
     }
 }

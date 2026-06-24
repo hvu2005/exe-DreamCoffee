@@ -84,4 +84,13 @@ namespace DreamCafe.Core.EventBus
         public DayEnded(int dayNumber, float totalRevenue, int customersServed, int customersLost)
         { DayNumber = dayNumber; TotalRevenue = totalRevenue; CustomersServed = customersServed; CustomersLost = customersLost; }
     }
+
+    public readonly struct UpgradePurchased : IEvent
+    {
+        public readonly string UpgradeId;
+        public readonly int    NewLevel;
+        public EventType Kind => EventType.UpgradePurchased;
+        public UpgradePurchased(string upgradeId, int newLevel)
+        { UpgradeId = upgradeId; NewLevel = newLevel; }
+    }
 }
