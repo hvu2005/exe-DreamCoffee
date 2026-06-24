@@ -29,7 +29,10 @@ namespace DreamCafe.Gameplay.Customer.States
             var customerService = owner.Context.Services.Resolve<ICustomerService>();
             customerService.OnCustomerDespawning(m.CustomerId, m.AssignedTableIndex);
 
-            owner.Context.Pool.Despawn(PoolKey.Customer, owner);
+            // Delay actual despawn until leave animation finishes.
+            var ctx      = owner.Context;
+            var pool     = ctx.Pool;
+            owner.View.PlayLeaveAnim(() => pool.Despawn(PoolKey.Customer, owner));
         }
 
         public void Tick(CustomerController owner, float dt) { }

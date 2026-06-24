@@ -32,6 +32,11 @@ namespace DreamCafe.Gameplay.Order
             Model.ItemId     = itemId;
             Model.Status     = OrderStatus.Pending;
 
+            // Resolve display name from recipe repository (null-safe: falls back to itemId).
+            var repo = ctx.Services.Resolve<IRecipeRepository>();
+            var recipe = repo?.GetRecipe(itemId);
+            Model.ItemName = recipe?.outputItem?.displayName;
+
             Subscribe<ItemCrafted>(OnItemCrafted);
             Subscribe<OrderServed>(OnOrderServed);
 

@@ -12,7 +12,7 @@ namespace DreamCafe.Gameplay.Input
     /// </summary>
     public sealed class PlayerInputRouter : MonoBehaviour
     {
-        [SerializeField] private Camera gameCamera;
+        [SerializeField] private UnityEngine.Camera gameCamera;
         [SerializeField] private LayerMask tappableLayer = ~0; // all layers by default
 
         private InputAction _tapAction;
@@ -20,7 +20,7 @@ namespace DreamCafe.Gameplay.Input
         private void Awake()
         {
             if (gameCamera == null)
-                gameCamera = Camera.main;
+                gameCamera = UnityEngine.Camera.main;
 
             _tapAction = new InputAction("Tap", InputActionType.Button);
             _tapAction.AddBinding("<Mouse>/leftButton");

@@ -49,6 +49,7 @@ namespace DreamCafe.Gameplay.Customer
             Model.PatienceStrategy = new LinearPatienceStrategy(data.patienceSeconds);
 
             View.Render(Model);
+            View.PlaySpawnAnim();
             FSM.Enter(WaitingForSeatState.Instance);
         }
 

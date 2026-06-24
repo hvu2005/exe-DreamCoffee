@@ -8,11 +8,12 @@ namespace DreamCafe.Gameplay.Order
         public string OrderId;
         public string CustomerId;
         public string ItemId;
+        public string ItemName;
         public OrderStatus Status;
 
         public void Reset()
         {
-            OrderId = CustomerId = ItemId = null;
+            OrderId = CustomerId = ItemId = ItemName = null;
             Status = OrderStatus.Pending;
         }
     }

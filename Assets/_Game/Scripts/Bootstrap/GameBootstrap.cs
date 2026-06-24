@@ -2,12 +2,14 @@ using DreamCafe.Core.EventBus;
 using DreamCafe.Core.MVC;
 using DreamCafe.Core.Pooling;
 using DreamCafe.Core.Services;
+using DreamCafe.Data;
 using DreamCafe.Gameplay.CraftingStation;
 using DreamCafe.Gameplay.Order;
 using DreamCafe.Gameplay.Table;
 using DreamCafe.Services.Customer;
 using DreamCafe.Services.Stubs;
 using DreamCafe.Services.Time;
+using DreamCafe.UI.Hud;
 using UnityEngine;
 
 namespace DreamCafe.App
@@ -20,8 +22,9 @@ namespace DreamCafe.App
     /// </summary>
     public sealed class GameBootstrap : MonoBehaviour
     {
-        [SerializeField] private Transform poolRoot;
-        [SerializeField] private Transform customerSpawnPoint;
+        [SerializeField] private Transform  poolRoot;
+        [SerializeField] private Transform  customerSpawnPoint;
+        [SerializeField] private CafeConfig cafeConfig;
 
         private CompositionRoot     _root;
         private ITimeService        _timeService;
@@ -69,8 +72,18 @@ namespace DreamCafe.App
             _customerService.SetSpawnPoint(
                 customerSpawnPoint != null ? customerSpawnPoint.position : Vector3.zero);
 
-            // 9. Cache per-frame services
+            // 9. Cache per-frame services and apply balance tuning
             _timeService = ctx.Services.Resolve<ITimeService>();
+
+            if (cafeConfig == null)
+                cafeConfig = Resources.Load<CafeConfig>("CafeConfig");
+
+            if (cafeConfig != null)
+            {
+                _customerService.SpawnIntervalSeconds = cafeConfig.spawnIntervalSeconds;
+                _timeService.DayLengthSeconds         = cafeConfig.dayLengthSeconds;
+                Debug.Log($"[GameBootstrap] CafeConfig applied — spawn: {cafeConfig.spawnIntervalSeconds}s, day: {cafeConfig.dayLengthSeconds}s.");
+            }
 
             // 10. Start Day 1
             _timeService.StartDay();
@@ -105,6 +118,10 @@ namespace DreamCafe.App
             // Order ticket spawner subscribes to OrderPlaced
             foreach (var sp in FindObjectsByType<OrderTicketSpawner>(FindObjectsSortMode.None))
                 sp.Bind(ctx);
+
+            // HUD subscribes to economy/customer/time events
+            foreach (var h in FindObjectsByType<HudController>(FindObjectsSortMode.None))
+                h.Bind(ctx);
         }
     }
 }

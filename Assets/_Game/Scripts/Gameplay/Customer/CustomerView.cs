@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using DreamCafe.Core.MVC;
 using DreamCafe.Data;
 using UnityEngine;
@@ -60,6 +62,37 @@ namespace DreamCafe.Gameplay.Customer
                     _                            => colorNeutral
                 };
             }
+        }
+
+        // ── Animations ────────────────────────────────────────────────────────
+
+        /// <summary>Scales from 0 to 1. Call on spawn before assigning a seat position.</summary>
+        public void PlaySpawnAnim()
+        {
+            StopAllCoroutines();
+            transform.localScale = Vector3.zero;
+            StartCoroutine(ScaleTo(Vector3.one, 0.2f, null));
+        }
+
+        /// <summary>Scales to 0 then invokes onComplete (which should call Pool.Despawn).</summary>
+        public void PlayLeaveAnim(Action onComplete)
+        {
+            StopAllCoroutines();
+            StartCoroutine(ScaleTo(Vector3.zero, 0.15f, onComplete));
+        }
+
+        private IEnumerator ScaleTo(Vector3 target, float duration, Action onComplete)
+        {
+            var start   = transform.localScale;
+            var elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                transform.localScale = Vector3.Lerp(start, target, elapsed / duration);
+                yield return null;
+            }
+            transform.localScale = target;
+            onComplete?.Invoke();
         }
     }
 }
