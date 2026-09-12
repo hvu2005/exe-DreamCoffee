@@ -13,6 +13,7 @@ namespace DreamCafe.Core.Pooling
         public static readonly PoolKey Customer       = new("Prefabs/CustomerPrefab");
         public static readonly PoolKey OrderTicket    = new("Prefabs/OrderTicketPrefab");
         public static readonly PoolKey CraftingStation = new("Prefabs/CraftingStationPrefab");
+        public static readonly PoolKey WorldItem      = new("Prefabs/WorldItemPrefab");
 
         public PoolKey(string resourcePath) => ResourcePath = resourcePath;
 

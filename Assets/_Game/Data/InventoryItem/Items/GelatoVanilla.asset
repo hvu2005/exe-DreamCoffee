@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d87f39734f16dd498e8e59c571b63ae, type: 3}
+  m_Name: GelatoVanilla
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.InventoryItem
+  id:
+  displayName: Vanilla Gelato
+  description:
+  icon: {fileID: 3582345689821424049, guid: 3fd3f345ac5d0474dbf9d945e13dbbfd, type: 3}
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  worldPrefab: {fileID: 6259152034383206533, guid: f58d56e08c9e4970936c1ae6a212b824, type: 3}
+  category: 2
+  unitLabel: tubs
+  basePrice: 25
+  shelfLifeDays: 14
+  maxQuantity: 100
+  quantity: 0
