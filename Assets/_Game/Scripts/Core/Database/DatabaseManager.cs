@@ -1,26 +1,24 @@
 using System.Collections.Generic;
 using DreamCafe.Core.Services;
+using DreamCafe.Core.Utils;
 using UnityEngine;
 
 namespace DreamCafe.Core.Database
 {
     /// <summary>
-    /// MonoBehaviour sống trong scene (đặt trên GameObject "DatabaseManagerSystem"). Kéo thả SO
-    /// trực tiếp vào <see cref="records"/> trong Inspector — key tra cứu tự động lấy theo tên kiểu
-    /// của asset (typeof(T).Name), nên chỗ khác chỉ cần gọi Get&lt;T&gt;() là nhận được, không cần
-    /// tự gõ key. Mỗi kiểu chỉ giữ đúng 1 asset (vd: 1 repository asset đại diện cho cả bảng).
+    /// Singleton sống xuyên scene (đặt trên GameObject "DatabaseManagerSystem"), truy cập nhanh
+    /// qua <c>DatabaseManager.Instance</c>. Kéo thả SO trực tiếp vào <see cref="records"/> trong
+    /// Inspector — key tra cứu tự động lấy theo tên kiểu của asset (typeof(T).Name), nên chỗ khác
+    /// chỉ cần gọi Get&lt;T&gt;() là nhận được, không cần tự gõ key. Mỗi kiểu chỉ giữ đúng 1 asset
+    /// (vd: 1 repository asset đại diện cho cả bảng).
     /// </summary>
-    public sealed class DatabaseManager : MonoBehaviour, IDatabaseManager
+    public sealed class DatabaseManager : MonoSingleton<DatabaseManager>, IDatabaseManager
     {
         [SerializeField] private List<ScriptableObject> records = new();
 
         private readonly Dictionary<string, ScriptableObject> _table = new();
 
-        private void Awake()
-        {
-            DontDestroyOnLoad(gameObject);
-            BuildIndex();
-        }
+        protected override void OnSingletonAwake() => BuildIndex();
 
         private void BuildIndex()
         {

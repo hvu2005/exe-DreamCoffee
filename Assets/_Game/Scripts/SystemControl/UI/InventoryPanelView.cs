@@ -22,7 +22,7 @@ namespace DreamCafe.SystemControl.UI
         [SerializeField] private InventorySlotView slotPrefab;
         [SerializeField] private TMP_Text summaryLabel;
         [SerializeField] private Button closeButton;
-        [SerializeField, Tooltip("Bỏ trống thì tự tìm trong scene lúc Awake.")]
+        [SerializeField, Tooltip("Bỏ trống thì dùng DatabaseManager.Instance.")]
         private DatabaseManager database;
 
         [Header("Input")]
@@ -32,9 +32,11 @@ namespace DreamCafe.SystemControl.UI
 
         public bool IsOpen => window != null && window.activeSelf;
 
+        /// <summary>Lấy lúc dùng chứ không phải lúc Awake — thứ tự Awake giữa các object không đảm bảo.</summary>
+        private DatabaseManager Database => database != null ? database : DatabaseManager.Instance;
+
         private void Awake()
         {
-            if (database == null) database = FindFirstObjectByType<DatabaseManager>();
             if (closeButton != null) closeButton.onClick.AddListener(Close);
             if (window != null) window.SetActive(false);
         }
@@ -61,7 +63,8 @@ namespace DreamCafe.SystemControl.UI
 
         public void Refresh()
         {
-            var repository = database != null ? database.Get<ScriptableInventoryItemRepository>() : null;
+            var db = Database;
+            var repository = db != null ? db.Get<ScriptableInventoryItemRepository>() : null;
             if (repository == null)
             {
                 Debug.LogWarning("[InventoryPanel] Chưa có ScriptableInventoryItemRepository trong DatabaseManager.");
