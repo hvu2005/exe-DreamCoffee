@@ -20,12 +20,21 @@ namespace DreamCafe.DataControl
     /// </summary>
     public sealed class CurrencyController : IService
     {
+        private const string PrefKeyMoney = "DreamCafe_Save_Money";
+        private const string PrefKeyMPS = "DreamCafe_Save_MPS";
+        private const string PrefKeyRep = "DreamCafe_Save_Rep";
+        private const string PrefKeyHasSave = "DreamCafe_Save_HasSave";
+
         private float _currentMoney = 500_000f; // Mặc định khởi đầu: 500.000đ
         private float _moneyPerSecond = 0f;
         private float _reputation = 0f;
 
         // Bộ đệm cộng dồn tiền theo giây để tránh cập nhật quá dày đặc
         private float _mpsAccumulator = 0f;
+
+        private readonly System.Collections.Generic.Dictionary<CurrencyType, CurrencyItem> _definitions = new();
+        private ICurrencyRepository _repository;
+        private bool _enableAutoSave = true;
 
         /// <summary>Bắn sự kiện chung khi bất kỳ chỉ số tiền tệ nào thay đổi.</summary>
         public event Action Changed;
@@ -46,6 +55,9 @@ namespace DreamCafe.DataControl
         /// <summary>Điểm danh tiếng quán hiện tại.</summary>
         public float Reputation => _reputation;
 
+        /// <summary>Có bật tự động lưu trữ hay không.</summary>
+        public bool EnableAutoSave { get => _enableAutoSave; set => _enableAutoSave = value; }
+
         // =====================================================================
         // IService Lifecycle
         // =====================================================================
@@ -61,6 +73,103 @@ namespace DreamCafe.DataControl
         {
             Changed = null;
             CurrencyChanged = null;
+            _definitions.Clear();
+            _repository = null;
+        }
+
+        // =====================================================================
+        // REPOSITORY / DATABASE INTEGRATION
+        // =====================================================================
+
+        /// <summary>
+        /// Đăng ký kho định nghĩa tĩnh từ DatabaseManager (tương tự Customer & Recipe).
+        /// Tự động nạp giá trị khởi đầu hoặc khôi phục dữ liệu đã lưu nếu có.
+        /// </summary>
+        public void RegisterFromRepository(ICurrencyRepository repository)
+        {
+            if (repository == null) return;
+            _repository = repository;
+            _enableAutoSave = repository.EnableAutoSave;
+            _definitions.Clear();
+
+            foreach (var def in repository.GetAllCurrencies())
+            {
+                if (def != null)
+                {
+                    _definitions[def.Type] = def;
+                }
+            }
+
+            // Nếu người chơi đã có save từ trước -> Load; Nếu là lần đầu -> Nạp starting values từ DB
+            if (HasSavedData())
+            {
+                Load();
+            }
+            else
+            {
+                ApplyDefaultsFromRepository();
+            }
+
+            Debug.Log($"[CurrencyController] Đã nạp thành công {_definitions.Count} định nghĩa tiền tệ từ Repository!");
+        }
+
+        /// <summary>Lấy định nghĩa tĩnh của loại tiền tệ theo enum.</summary>
+        public CurrencyItem GetDefinition(CurrencyType type) =>
+            _definitions.TryGetValue(type, out var def) ? def : null;
+
+        /// <summary>Lấy toàn bộ định nghĩa tĩnh của các loại tiền tệ.</summary>
+        public CurrencyItem[] GetAllDefinitions()
+        {
+            var arr = new CurrencyItem[_definitions.Count];
+            _definitions.Values.CopyTo(arr, 0);
+            return arr;
+        }
+
+        /// <summary>Nạp các giá trị khởi tạo từ Database.</summary>
+        public void ApplyDefaultsFromRepository()
+        {
+            if (_repository != null)
+            {
+                SetMoney(_repository.GetStartingValue(CurrencyType.Money));
+                SetMoneyPerSecond(_repository.GetStartingValue(CurrencyType.MoneyPerSecond));
+                SetReputation(_repository.GetStartingValue(CurrencyType.Reputation));
+            }
+        }
+
+        // =====================================================================
+        // PERSISTENT SAVE / LOAD (DATABASE LƯU TRỮ)
+        // =====================================================================
+
+        public bool HasSavedData() => PlayerPrefs.GetInt(PrefKeyHasSave, 0) == 1;
+
+        public void Save()
+        {
+            PlayerPrefs.SetFloat(PrefKeyMoney, _currentMoney);
+            PlayerPrefs.SetFloat(PrefKeyMPS, _moneyPerSecond);
+            PlayerPrefs.SetFloat(PrefKeyRep, _reputation);
+            PlayerPrefs.SetInt(PrefKeyHasSave, 1);
+            PlayerPrefs.Save();
+        }
+
+        public void Load()
+        {
+            if (!HasSavedData()) return;
+            _currentMoney = PlayerPrefs.GetFloat(PrefKeyMoney, 500_000f);
+            _moneyPerSecond = PlayerPrefs.GetFloat(PrefKeyMPS, 0f);
+            _reputation = PlayerPrefs.GetFloat(PrefKeyRep, 0f);
+            _mpsAccumulator = 0f;
+            NotifyChanged(CurrencyType.Money, _currentMoney, 0);
+            NotifyChanged(CurrencyType.MoneyPerSecond, _moneyPerSecond, 0);
+            NotifyChanged(CurrencyType.Reputation, _reputation, 0);
+        }
+
+        public void DeleteSave()
+        {
+            PlayerPrefs.DeleteKey(PrefKeyMoney);
+            PlayerPrefs.DeleteKey(PrefKeyMPS);
+            PlayerPrefs.DeleteKey(PrefKeyRep);
+            PlayerPrefs.DeleteKey(PrefKeyHasSave);
+            PlayerPrefs.Save();
         }
 
         // =====================================================================
@@ -250,6 +359,11 @@ namespace DreamCafe.DataControl
         {
             CurrencyChanged?.Invoke(type, newValue, delta);
             Changed?.Invoke();
+
+            if (_enableAutoSave && !Mathf.Approximately(delta, 0f))
+            {
+                Save();
+            }
         }
     }
 }

@@ -56,11 +56,12 @@ namespace DreamCafe.EditorTools
 
             var soDb = new SerializedObject(db);
             var recordsProp = soDb.FindProperty("records");
-            recordsProp.arraySize = 4;
+            recordsProp.arraySize = 5;
             recordsProp.GetArrayElementAtIndex(0).objectReferenceValue = AssetDatabase.LoadAssetAtPath<ScriptableCustomerRepository>("Assets/_Game/Data/Customers/CustomerRepository.asset");
             recordsProp.GetArrayElementAtIndex(1).objectReferenceValue = AssetDatabase.LoadAssetAtPath<ScriptableRecipeRepository>("Assets/_Game/Data/Recipes/RecipeRepository.asset");
             recordsProp.GetArrayElementAtIndex(2).objectReferenceValue = AssetDatabase.LoadAssetAtPath<ScriptableInventoryItemRepository>("Assets/_Game/Data/InventoryItem/InventoryItemRepository.asset");
             recordsProp.GetArrayElementAtIndex(3).objectReferenceValue = AssetDatabase.LoadAssetAtPath<ScriptableDecorRepository>("Assets/_Game/Data/Decor/DecorRepository.asset");
+            recordsProp.GetArrayElementAtIndex(4).objectReferenceValue = AssetDatabase.LoadAssetAtPath<ScriptableCurrencyRepository>("Assets/_Game/Data/Currency/CurrencyRepository.asset");
             soDb.ApplyModifiedProperties();
 
             // 3. Canvas & TopBar Currency UI

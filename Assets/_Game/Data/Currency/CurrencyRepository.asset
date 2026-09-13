@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 608bfe92457f28844ad894b5fec459c2, type: 3}
+  m_Name: CurrencyRepository
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.ScriptableCurrencyRepository
+  _currencies:
+  - {fileID: 11400000, guid: 6c6e9f87684c7464f839c7a3f6938aa3, type: 2}
+  - {fileID: 11400000, guid: 7167c17543be9a54a9ed897ace444172, type: 2}
+  - {fileID: 11400000, guid: 3aa0544e35be2964bbda38b2c933ce75, type: 2}
+  _enableAutoSave: 1
