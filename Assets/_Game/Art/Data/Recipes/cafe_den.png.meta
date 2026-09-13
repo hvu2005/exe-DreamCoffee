@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: d9ea55b5c55154f46bc1cf5df3b313a5
+guid: 3cdc1a94e1dfed140a0b658e719e1d6e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4233111953462593997
-    second: ico_shop 2_0
+      213: -7080174665754082884
+    second: cafe_den_0
+  - first:
+      213: -117237013458269909
+    second: cafe_den_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +129,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ico_shop 2_0
+      name: cafe_den_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 119
-        height: 120
+        width: 1109
+        height: 1382
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +144,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 336f6673b17f045c0800000000000000
-      internalID: -4233111953462593997
+      spriteID: cb1020467aa2ebd90800000000000000
+      internalID: -7080174665754082884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cafe_den_1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1178
+        width: 5
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b29ca42be8d7f5ef0800000000000000
+      internalID: -117237013458269909
       vertices: []
       indices: 
       edges: []
@@ -151,7 +176,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +186,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ico_shop 2_0: -4233111953462593997
+      cafe_den_0: -7080174665754082884
+      cafe_den_1: -117237013458269909
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

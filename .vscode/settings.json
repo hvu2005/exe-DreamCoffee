@@ -67,5 +67,8 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "exe-DreamCoffee.slnx"
+    "dotnet.defaultSolution": "exe-DreamCoffee.slnx",
+    "dotrush.roslyn.projectOrSolutionFiles": [
+        "d:\\Unity\\exe-DreamCoffee\\exe-DreamCoffee.slnx"
+    ]
 }

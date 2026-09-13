@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aac1f93f0af1fcb48b7519869b85c5b6, type: 3}
+  m_Name: CustomerRepository
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.ScriptableCustomerRepository
+  _customers:
+  - {fileID: 11400000, guid: 9b5879161ab13e248891958d3e107542, type: 2}
+  - {fileID: 11400000, guid: 553bdd7c03627fb47a32570d54915061, type: 2}
+  - {fileID: 11400000, guid: 2301f14f039de0c4ca730e9c26b683c4, type: 2}
+  - {fileID: 11400000, guid: 21e5925c036803a4c9061a9586d3ef53, type: 2}

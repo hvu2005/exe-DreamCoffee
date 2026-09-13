@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: d9ea55b5c55154f46bc1cf5df3b313a5
+guid: 14863d9c287481d4aa0f28ec7be84b9c
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4233111953462593997
-    second: ico_shop 2_0
+      213: 5805186907377802213
+    second: bac_xiu_0
+  - first:
+      213: 7975210469219951180
+    second: bac_xiu_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +129,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ico_shop 2_0
+      name: bac_xiu_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 119
-        height: 120
+        y: 10
+        width: 1108
+        height: 1280
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +144,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 336f6673b17f045c0800000000000000
-      internalID: -4233111953462593997
+      spriteID: 5eb900d2cba209050800000000000000
+      internalID: 5805186907377802213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bac_xiu_1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 591
+        width: 5
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c42e4d2daa3adae60800000000000000
+      internalID: 7975210469219951180
       vertices: []
       indices: 
       edges: []
@@ -151,7 +176,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +186,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ico_shop 2_0: -4233111953462593997
+      bac_xiu_0: 5805186907377802213
+      bac_xiu_1: 7975210469219951180
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

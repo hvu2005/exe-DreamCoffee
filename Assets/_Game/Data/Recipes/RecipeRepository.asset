@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7520265761407b47b075ad06681ec51, type: 3}
+  m_Name: RecipeRepository
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.ScriptableRecipeRepository
+  _recipes:
+  - {fileID: 11400000, guid: 2c478bdc59a7dbb43a292cf2949fa579, type: 2}
+  - {fileID: 11400000, guid: e3e501c15e2250c43a56cd9850b150f5, type: 2}
+  - {fileID: 11400000, guid: 985dad1dbc2d4d3498f6648d9bdd993b, type: 2}
+  - {fileID: 11400000, guid: de51f3b6f55739e4ea43957ee4fab26b, type: 2}
+  - {fileID: 11400000, guid: 0bee5a8c9ff327048880768bac86b529, type: 2}

@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f2ab91139deb44d8f9d83d1da2930b, type: 3}
+  m_Name: cus_van_phong
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.CustomerItem
+  _id: cus_van_phong
+  _displayName: "D\xE2n V\u0103n Ph\xF2ng"
+  _description: "C\u1EA7n n\u1EA1p caffein bu\u1ED5i s\xE1ng, u\u1ED1ng nhanh \u0111i
+    l\xE0m."
+  _avatar: {fileID: 4625154624261518820, guid: 708191e03a616db4b90a057c883c711d, type: 3}
+  _customerType: 1
+  _basePatienceSeconds: 25
+  _budgetMin: 25000
+  _budgetMax: 60000
+  _tipChance: 0.5
+  _diningTimeSeconds: 6
+  _favoriteRecipeIds:
+  - recipe_caphe_den
+  - recipe_caphe_sua
+  - recipe_bac_xiu
+  _unlockThreshold: 3
+  _isDefaultUnlocked: 1

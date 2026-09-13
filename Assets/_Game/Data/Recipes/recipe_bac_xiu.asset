@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64bcc7ba7790b8140a0bccf931ffb808, type: 3}
+  m_Name: recipe_bac_xiu
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.RecipeItem
+  _id: recipe_bac_xiu
+  _displayName: "B\u1EA1c X\u1EC9u"
+  _description: "Nhi\u1EC1u s\u1EEFa \xEDt c\xE0 ph\xEA, b\xE9o ng\u1EADy vani."
+  _icon: {fileID: 5805186907377802213, guid: 14863d9c287481d4aa0f28ec7be84b9c, type: 3}
+  _outputItemId: 
+  _requiredIngredientIds:
+  - coffee_bean
+  - milk
+  - gelato_vanilla
+  _craftTimeSeconds: 3.5
+  _basePrice: 30000
+  _isDefaultUnlocked: 1

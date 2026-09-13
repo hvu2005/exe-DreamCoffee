@@ -105,6 +105,9 @@ namespace DreamCafe.DataControl
         public bool Has(InventoryItem itemDefinition, int amount = 1) =>
             itemDefinition != null && (amount <= 0 || GetQuantity(itemDefinition) >= amount);
 
+        public bool Has(string id, int amount = 1) =>
+            !string.IsNullOrEmpty(id) && (amount <= 0 || GetQuantity(id) >= amount);
+
         /// <summary>Lấy bản runtime (mang Quantity thật) đang được kho theo dõi, null nếu chưa có trong kho.</summary>
         public InventoryItem Get(InventoryItem itemDefinition) =>
             itemDefinition != null && _items.TryGetValue(itemDefinition.Id, out var runtime) ? runtime : null;
