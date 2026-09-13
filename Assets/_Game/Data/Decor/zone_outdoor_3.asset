@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3faf83a2684b23c4eb295d2e8dba0d4a, type: 3}
+  m_Name: zone_outdoor_3
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.ExpansionZoneData
+  _zoneId: 2
+  _zoneName: "S\xE2n Hi\xEAn Ngo\xE0i Tr\u1EDDi"
+  _description: "M\u1EDF r\u1ED9ng kh\xF4ng gian h\xE8 ph\u1ED1 v\u1EDBi l\u1ED1i
+    v\xE0o, b\u1EADc th\u1EC1m v\xE0 b\u1ED3n hoa t\u01B0\u01A1i m\xE1t."
+  _unlockPrice: 0
+  _requiredReputation: 0
+  _reputationBonus: 0
+  _isDefaultUnlocked: 1
+  _slotIdsInZone:
+  - slot_outdoor_01
+  - slot_outdoor_02

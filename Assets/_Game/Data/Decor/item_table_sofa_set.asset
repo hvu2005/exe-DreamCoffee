@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a272b10859a620843812a86745dda33f, type: 3}
+  m_Name: item_table_sofa_set
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.DecorItem
+  _id: item_table_sofa_set
+  _displayName: "C\u1EE5m Gh\u1EBF Sofa B\u1ECDc N\u1EC9"
+  _description: "C\u1EE5m sofa n\u1EC9 cao c\u1EA5p c\u1EF1c k\u1EF3 tho\u1EA3i m\xE1i,
+    thu h\xFAt kh\xE1ch VIP v\xE0 kh\xE1ch du l\u1ECBch."
+  _category: 0
+  _theme: 3
+  _tier: 3
+  _price: 150000
+  _requiredReputation: 0
+  _reputationBonus: 500
+  _isDefaultUnlocked: 0
+  _patienceBonusPercent: 0.2
+  _tipChanceBonus: 0.12
+  _seatingCapacity: 2
+  _moneyPerSecondBonus: 0
+  _icon: {fileID: -8826876588158706320, guid: 689d6d99dea9901468714f050a8cedca, type: 3}
+  _prefab: {fileID: 6777534467620251709, guid: d695c92b1615e044f89e1b4c0b2bf23b, type: 3}

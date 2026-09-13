@@ -42,7 +42,13 @@ namespace DreamCafe.Core.Database
             _table[asset.GetType().Name] = asset;
         }
 
-        public T Get<T>() where T : ScriptableObject =>
-            _table.TryGetValue(typeof(T).Name, out var asset) ? asset as T : null;
+        public T Get<T>() where T : ScriptableObject
+        {
+            if (_table.Count == 0 && records != null && records.Count > 0)
+            {
+                BuildIndex();
+            }
+            return _table.TryGetValue(typeof(T).Name, out var asset) ? asset as T : null;
+        }
     }
 }

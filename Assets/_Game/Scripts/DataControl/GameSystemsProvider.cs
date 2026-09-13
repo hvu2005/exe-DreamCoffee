@@ -23,6 +23,7 @@ namespace DreamCafe.DataControl
         private RecipeController _recipeController;
         private CurrencyController _currencyController;
         private InventoryController _inventoryController;
+        private DecorController _decorController;
 
         /// <summary>Controller quản lý dữ liệu Khách Hàng (CRUD).</summary>
         public CustomerController Customer => _customerController;
@@ -35,6 +36,9 @@ namespace DreamCafe.DataControl
 
         /// <summary>Controller quản lý Kho Nguyên Liệu (CRUD).</summary>
         public InventoryController Inventory => _inventoryController;
+
+        /// <summary>Controller quản lý Nội Thất & Mở Rộng Không Gian (CRUD).</summary>
+        public DecorController Decor => _decorController;
 
         protected override void OnSingletonAwake()
         {
@@ -53,11 +57,13 @@ namespace DreamCafe.DataControl
             _recipeController = new RecipeController();
             _currencyController = new CurrencyController();
             _inventoryController = new InventoryController();
+            _decorController = new DecorController();
 
             _customerController.Init(null);
             _recipeController.Init(null);
             _currencyController.Init(null);
             _inventoryController.Init(null);
+            _decorController.Init(null);
 
             // Khi một công thức mới được mở khóa => Tự động kiểm tra mở khóa khách hàng nếu đủ món yêu thích!
             _recipeController.RecipeUnlocked += OnRecipeUnlocked;
@@ -65,7 +71,7 @@ namespace DreamCafe.DataControl
 
         private void LoadDefinitionsFromDatabase()
         {
-            var db = DatabaseManager.Instance;
+            var db = DatabaseManager.Instance ?? FindFirstObjectByType<DatabaseManager>();
             if (db == null) return;
 
             // Load khách hàng từ DatabaseManager
@@ -93,6 +99,13 @@ namespace DreamCafe.DataControl
                         _inventoryController.Add(item, item.Quantity);
                     }
                 }
+            }
+
+            // Load danh mục nội thất & khu vực mở rộng từ DatabaseManager
+            var decorRepo = db.Get<ScriptableDecorRepository>();
+            if (decorRepo != null)
+            {
+                _decorController.RegisterFromRepository(decorRepo);
             }
         }
 
@@ -124,6 +137,7 @@ namespace DreamCafe.DataControl
             _recipeController?.Shutdown();
             _currencyController?.Shutdown();
             _inventoryController?.Shutdown();
+            _decorController?.Shutdown();
         }
     }
 }
