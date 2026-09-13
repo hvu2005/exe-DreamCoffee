@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d9ea55b5c55154f46bc1cf5df3b313a5
+guid: 298e4c2285bd1cb4090f7451d9b49a45
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4233111953462593997
-    second: ico_shop 2_0
+      213: 5523624944935732613
+    second: cus_tourist-removebg-preview_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ico_shop 2_0
+      name: cus_tourist-removebg-preview_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 119
-        height: 120
+        x: 79
+        y: 25
+        width: 280
+        height: 502
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 336f6673b17f045c0800000000000000
-      internalID: -4233111953462593997
+      spriteID: 585816b3f9bd7ac40800000000000000
+      internalID: 5523624944935732613
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ico_shop 2_0: -4233111953462593997
+      cus_tourist-removebg-preview_0: 5523624944935732613
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f2ab91139deb44d8f9d83d1da2930b, type: 3}
+  m_Name: cus_sinh_vien
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.CustomerItem
+  _id: cus_sinh_vien
+  _displayName: "B\u1EA1n Sinh Vi\xEAn"
+  _description: "Th\xEDch ng\u1ED3i h\u1ECDc b\xE0i, th\xEDch m\xF3n ng\u1ECDt thanh
+    gi\xE1 sinh vi\xEAn."
+  _avatar: {fileID: 558858761503176559, guid: ce42516839f0a5d49aec233cbba8598b, type: 3}
+  _customerType: 0
+  _basePatienceSeconds: 35
+  _budgetMin: 15000
+  _budgetMax: 35000
+  _tipChance: 0.25
+  _diningTimeSeconds: 8
+  _favoriteRecipeIds:
+  - recipe_caphe_den
+  - recipe_caphe_sua
+  - recipe_tra_mango
+  _unlockThreshold: 3
+  _isDefaultUnlocked: 1

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64bcc7ba7790b8140a0bccf931ffb808, type: 3}
+  m_Name: recipe_caphe_sua
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.RecipeItem
+  _id: recipe_caphe_sua
+  _displayName: "C\xE0 Ph\xEA S\u1EEFa"
+  _description: "C\xE0 ph\xEA \u0111en pha c\xF9ng s\u1EEFa \u0111\u1EB7c th\u01A1m
+    ng\u1ECDt."
+  _icon: {fileID: -1503643465731739414, guid: 2607880fa69422344aa9e85221787998, type: 3}
+  _outputItemId: 
+  _requiredIngredientIds:
+  - coffee_bean
+  - milk
+  _craftTimeSeconds: 3
+  _basePrice: 25000
+  _isDefaultUnlocked: 1
