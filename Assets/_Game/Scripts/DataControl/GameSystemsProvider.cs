@@ -107,6 +107,13 @@ namespace DreamCafe.DataControl
             {
                 _decorController.RegisterFromRepository(decorRepo);
             }
+
+            // Load cấu hình tiền tệ từ DatabaseManager (tương tự Customer & Recipe)
+            var currencyRepo = db.Get<ScriptableCurrencyRepository>();
+            if (currencyRepo != null)
+            {
+                _currencyController.RegisterFromRepository(currencyRepo);
+            }
         }
 
         private void AutoBindTopBar()

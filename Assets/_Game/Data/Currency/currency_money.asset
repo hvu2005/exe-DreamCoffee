@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e339d39a303a3c4fae49305a32d8767, type: 3}
+  m_Name: currency_money
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.CurrencyItem
+  _type: 0
+  _id: currency_money
+  _displayName: "Ti\u1EC1n M\u1EB7t"
+  _unitSymbol: "\u0111"
+  _description: "Ti\u1EC1n t\u1EC7 ch\xEDnh d\xF9ng \u0111\u1EC3 mua s\u1EAFm nguy\xEAn
+    li\u1EC7u, m\u1EDF r\u1ED9ng kh\xF4ng gian v\xE0 trang tr\xED n\u1ED9i th\u1EA5t
+    cho qu\xE1n."
+  _icon: {fileID: -3173056928250890145, guid: 3062bcaec3c97a141aa74c2a71960d96, type: 3}
+  _startingValue: 500000
+  _minValue: 0
+  _maxValue: 1e+9
