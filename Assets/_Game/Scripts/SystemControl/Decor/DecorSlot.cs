@@ -54,7 +54,7 @@ namespace DreamCafe.SystemControl.Decor
 
         [Header("Lớp hiển thị (Sorting Layer & Order Override)")]
         [SerializeField] private bool _overrideSorting = false;
-        [SerializeField] private string _customSortingLayer = "Planter";
+        [SerializeField] private string _customSortingLayer = "Default";
         [SerializeField] private int _customSortingOrder = 18;
 
         [Header("Độ lệch vị trí tùy chỉnh theo từng Item")]
@@ -349,7 +349,7 @@ namespace DreamCafe.SystemControl.Decor
             {
                 string targetLayer = (_overrideSorting && !string.IsNullOrEmpty(_customSortingLayer))
                     ? _customSortingLayer
-                    : "Planter";
+                    : "Default";
                 int targetOrder = _overrideSorting ? _customSortingOrder : 18;
 
                 var srs = instance.GetComponentsInChildren<SpriteRenderer>(true);
