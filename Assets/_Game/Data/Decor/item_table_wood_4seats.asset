@@ -27,5 +27,7 @@ MonoBehaviour:
   _tipChanceBonus: 0.06
   _seatingCapacity: 4
   _moneyPerSecondBonus: 0
-  _icon: {fileID: 2786832384207232482, guid: 689d6d99dea9901468714f050a8cedca, type: 3}
+  _icon: {fileID: 2808107812966753301, guid: 516e11a0edc5a664d9093152c05a019d, type: 3}
   _prefab: {fileID: 7969115705376355583, guid: ef9b27c73c153024f9a2fc081e0b7674, type: 3}
+  _defaultSpawnOffset: {x: 0, y: 0}
+  _rightWallSprite: {fileID: 0}

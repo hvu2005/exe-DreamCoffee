@@ -35,8 +35,15 @@ namespace DreamCafe.SystemControl.Decor
             UnbindController();
         }
 
+        private void Awake()
+        {
+            ValidateOrCollectSlots();
+        }
+
         private void Start()
         {
+            ValidateOrCollectSlots();
+
             var systems = GameSystemsProvider.Instance;
             if (systems != null)
             {
@@ -56,6 +63,7 @@ namespace DreamCafe.SystemControl.Decor
                 _decorController.DecorEquipped += OnDecorEquipped;
                 _decorController.DecorUnequipped += OnDecorUnequipped;
                 _decorController.ZoneUnlocked += OnZoneUnlocked;
+                _decorController.Changed += RefreshAll;
 
                 RefreshAll();
             }
@@ -68,6 +76,7 @@ namespace DreamCafe.SystemControl.Decor
                 _decorController.DecorEquipped -= OnDecorEquipped;
                 _decorController.DecorUnequipped -= OnDecorUnequipped;
                 _decorController.ZoneUnlocked -= OnZoneUnlocked;
+                _decorController.Changed -= RefreshAll;
                 _decorController = null;
             }
         }
@@ -77,7 +86,8 @@ namespace DreamCafe.SystemControl.Decor
         /// </summary>
         public void RefreshAll()
         {
-            if (_decorController == null) return;
+            if (_decorController == null || _decorController.GetAllItems().Length == 0) return;
+            ValidateOrCollectSlots();
 
             // 1. Cập nhật các Zone
             foreach (var zoneView in _zones)
@@ -104,18 +114,49 @@ namespace DreamCafe.SystemControl.Decor
             }
         }
 
+        private DecorSlot FindSlot(string slotId)
+        {
+            if (string.IsNullOrEmpty(slotId)) return null;
+
+            // 1. Tìm trong danh sách hiện tại
+            var slot = _slots.Find(s => s != null && s.SlotId == slotId);
+            if (slot != null) return slot;
+
+            // 2. Tự phục hồi: Quét lại toàn bộ DecorSlot trong Scene
+            ValidateOrCollectSlots();
+            slot = _slots.Find(s => s != null && s.SlotId == slotId);
+            if (slot != null) return slot;
+
+            // 3. Tìm toàn cục nếu slot nằm ngoài ShopLayout
+            var allSceneSlots = FindObjectsByType<DecorSlot>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var s in allSceneSlots)
+            {
+                if (s != null && s.SlotId == slotId)
+                {
+                    if (!_slots.Contains(s)) _slots.Add(s);
+                    return s;
+                }
+            }
+
+            return null;
+        }
+
         private void OnDecorEquipped(string slotId, DecorItem item)
         {
-            var slot = _slots.Find(s => s != null && s.SlotId == slotId);
+            var slot = FindSlot(slotId);
             if (slot != null)
             {
                 slot.DisplayItem(item);
+            }
+            else
+            {
+                Debug.LogWarning($"[DecorSceneManager] Không tìm thấy slot với Id '{slotId}' để hiển thị '{item?.DisplayName}'.");
             }
         }
 
         private void OnDecorUnequipped(string slotId)
         {
-            var slot = _slots.Find(s => s != null && s.SlotId == slotId);
+            var slot = FindSlot(slotId);
             if (slot != null)
             {
                 slot.ClearDisplay();
@@ -156,19 +197,41 @@ namespace DreamCafe.SystemControl.Decor
             _decorController.TryUnlockZone(zoneId, _currencyController);
         }
 
-        // Editor helper
-        public void CollectSceneObjects()
+        public void ValidateOrCollectSlots()
         {
-            _slots.Clear();
-            _slots.AddRange(GetComponentsInChildren<DecorSlot>(true));
+            _slots.RemoveAll(s => s == null);
+            _zones.RemoveAll(z => z == null);
 
-            _zones.Clear();
-            _zones.AddRange(GetComponentsInChildren<ExpansionZoneView>(true));
+            var childSlots = GetComponentsInChildren<DecorSlot>(true);
+            foreach (var s in childSlots)
+            {
+                if (s != null && !_slots.Contains(s))
+                {
+                    _slots.Add(s);
+                }
+            }
+
+            var childZones = GetComponentsInChildren<ExpansionZoneView>(true);
+            foreach (var z in childZones)
+            {
+                if (z != null && !_zones.Contains(z))
+                {
+                    _zones.Add(z);
+                }
+            }
 
             if (_placementPanel == null)
             {
                 _placementPanel = FindFirstObjectByType<DecorPlacementPanel>(FindObjectsInactive.Include);
             }
+        }
+
+        // Editor helper
+        public void CollectSceneObjects()
+        {
+            _slots.Clear();
+            _zones.Clear();
+            ValidateOrCollectSlots();
         }
     }
 }

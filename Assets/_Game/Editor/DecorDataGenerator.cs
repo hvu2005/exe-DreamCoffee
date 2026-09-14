@@ -27,15 +27,21 @@ namespace DreamCafe.EditorTools
             SetupAtlases();
 
             // Load sub-sprites đã tách nền
-            // Load sub-sprites đã tách nền
-            var spriteCounterFull = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/Decor/prop_counter_station_full.png");
+            // Load sub-sprites đã tách nền và các asset mới
+            var spriteCounterFull = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/Decor/prop_counter.png");
             var spriteAcUnit = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/Decor/prop_ac_unit.png");
             var spriteWallArtLatte = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/Decor/prop_wall_painting_latte.png");
+            var spriteWallMenu = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/Decor/prop_wall_menu.png");
+            var spriteWallShelves = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/Decor/prop_wall_shelves.png");
+            var spritePlanterHydrangea = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/Decor/prop_planter_hydrangea.png");
+            if (spritePlanterHydrangea == null)
+            {
+                spritePlanterHydrangea = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/_Game/Art/Decor/flower_tank.png");
+            }
 
             var spriteCounter = LoadSubSprite(TransCounterPath, "sprite_counter_emerald");
             var spriteCoffeeMachine = LoadSubSprite(TransCounterPath, "sprite_coffee_machine");
             var spriteMenuBoard = LoadSubSprite(TransCounterPath, "sprite_menu_board");
-            var spriteWallShelves = LoadSubSprite(TransCounterPath, "sprite_wall_shelves");
 
             var spriteWoodRound = LoadSubSprite(TransFurniturePath, "sprite_table_wood_round");
             var spriteChairR = LoadSubSprite(TransFurniturePath, "sprite_chair_r");
@@ -44,7 +50,6 @@ namespace DreamCafe.EditorTools
             var spriteSofaL = LoadSubSprite(TransFurniturePath, "sprite_sofa_armchair_l");
             var spriteBakeryDisplay = LoadSubSprite(TransFurniturePath, "sprite_bakery_display");
             var spritePlantMonstera = LoadSubSprite(TransFurniturePath, "sprite_plant_monstera");
-            var spritePlanterHydrangea = LoadSubSprite(TransFurniturePath, "sprite_planter_hydrangea");
 
             // 1. Tạo Prefabs kết hợp (Composite Prefabs) không nền
             var prefabCounter = CreateCounterStationPrefab("Prefab_Counter_Emerald", spriteCounterFull, spriteCounter, spriteCoffeeMachine, spriteBakeryDisplay, spriteMenuBoard, spriteWallShelves);
@@ -53,11 +58,11 @@ namespace DreamCafe.EditorTools
             var prefabSofaSet = CreateSofaLoungePrefab("Prefab_Table_SofaSet", spriteWoodRound, spriteSofaR, spriteSofaL);
             var prefabBakery = CreateSingleSpritePrefab("Prefab_Bakery_Display", spriteBakeryDisplay, new Vector2(1.2f, 1.2f), 0.38f, 10);
             var prefabPlant = CreateSingleSpritePrefab("Prefab_Plant_Monstera", spritePlantMonstera, new Vector2(0.9f, 1.2f), 0.35f, 10);
-            var prefabPlanter = CreateSingleSpritePrefab("Prefab_Planter_Hydrangea", spritePlanterHydrangea, new Vector2(1.2f, 0.9f), 0.35f, 12);
+            var prefabPlanter = CreateSingleSpritePrefab("Prefab_Planter_Hydrangea", spritePlanterHydrangea, new Vector2(1.2f, 0.9f), 1.0f, 12);
             var prefabAc = CreateSingleSpritePrefab("Prefab_AC_Unit", spriteAcUnit, new Vector2(0.8f, 1.4f), 0.72f, 7);
-            var prefabWallArtLatte = CreateSingleSpritePrefab("Prefab_Wall_Painting_Latte", spriteWallArtLatte, new Vector2(0.9f, 1.1f), 0.36f, 20);
-            var prefabWallMenu = CreateSingleSpritePrefab("Prefab_Wall_Menu", spriteMenuBoard, new Vector2(0.9f, 1.1f), 0.36f, 20);
-            var prefabWallShelves = CreateSingleSpritePrefab("Prefab_Wall_Shelves", spriteWallShelves, new Vector2(1.0f, 0.8f), 0.36f, 20);
+            var prefabWallArtLatte = CreateSingleSpritePrefab("Prefab_Wall_Painting_Latte", spriteWallArtLatte, new Vector2(0.8f, 1.0f), 1.0f, 20);
+            var prefabWallMenu = CreateSingleSpritePrefab("Prefab_Wall_Menu", spriteWallMenu, new Vector2(0.8f, 1.0f), 1.0f, 20);
+            var prefabWallShelves = CreateSingleSpritePrefab("Prefab_Wall_Shelves", spriteWallShelves, new Vector2(0.85f, 0.9f), 1.0f, 20);
 
             // 2. Tạo DecorItem ScriptableObjects
             var itemCounter = CreateOrGetDecor("item_counter_emerald", "Quầy Bar Xanh Ngọc",
@@ -91,7 +96,7 @@ namespace DreamCafe.EditorTools
                 0.05f, 0.02f, 0, 2f, spritePlantMonstera, prefabPlant);
 
             var itemPlanterHydrangea = CreateOrGetDecor("item_planter_hydrangea", "Bồn Hoa Cẩm Tú Cầu",
-                "Bồn hoa gỗ nở rộ cẩm tú cầu trắng, làm đẹp thêm cho mặt tiền quán.",
+                "Bồn hoa gỗ nở rộ cẩm tú cầu trắng, làm đẹp thêm cho mặt tiền quán với góc nhìn sàn Isometric.",
                 DecorCategory.OutdoorPlanter, DecorTheme.CutePastel, 2, 50000, 0, 250, false,
                 0.08f, 0.04f, 0, 3f, spritePlanterHydrangea, prefabPlanter);
 
@@ -108,7 +113,7 @@ namespace DreamCafe.EditorTools
             var itemWallMenu = CreateOrGetDecor("item_wall_menu", "Bảng Menu Gỗ Treo Tường",
                 "Bảng thực đơn gỗ sồi cao cấp giúp khách hàng dễ dàng gọi món yêu thích.",
                 DecorCategory.WallDecor, DecorTheme.CozyWood, 1, 20000, 0, 120, true,
-                0.08f, 0.03f, 0, 3f, spriteMenuBoard, prefabWallMenu);
+                0.08f, 0.03f, 0, 3f, spriteWallMenu, prefabWallMenu);
 
             var itemWallShelves = CreateOrGetDecor("item_wall_shelves", "Kệ Gỗ Ly Tách Treo Tường",
                 "Kệ trưng bày ly tách gốm sứ nghệ thuật làm tăng vẻ sang trọng cho quán.",
@@ -330,7 +335,7 @@ namespace DreamCafe.EditorTools
         {
             string path = $"{DecorPrefabDir}/{name}.prefab";
             var root = new GameObject(name);
-            root.transform.localScale = new Vector3(0.78f, 0.78f, 1f);
+            root.transform.localScale = new Vector3(0.35f, 0.35f, 1f);
             var col = root.AddComponent<BoxCollider2D>();
             col.size = new Vector2(3.0f, 1.8f);
             col.offset = new Vector2(0f, 0.35f);

@@ -21,6 +21,8 @@ namespace DreamCafe.SystemControl.UI
         [SerializeField] private TMP_Text _subtitleText;
         [SerializeField] private Button _closeButton;
         [SerializeField] private Button _unequipButton;
+        [SerializeField] private Button _toggleWallPerspectiveButton;
+        [SerializeField] private TMP_Text _wallPerspectiveButtonText;
 
         [Header("Item Cards Container")]
         [SerializeField] private Transform _cardsContainer;
@@ -41,6 +43,21 @@ namespace DreamCafe.SystemControl.UI
             if (_unequipButton != null)
             {
                 _unequipButton.onClick.AddListener(OnUnequipClicked);
+            }
+
+            if (_toggleWallPerspectiveButton == null && _unequipButton != null)
+            {
+                var clone = Instantiate(_unequipButton.gameObject, _unequipButton.transform.parent);
+                clone.name = "Button_TogglePerspective";
+                _toggleWallPerspectiveButton = clone.GetComponent<Button>();
+                _wallPerspectiveButtonText = clone.GetComponentInChildren<TMP_Text>();
+                _toggleWallPerspectiveButton.onClick.RemoveAllListeners();
+                _toggleWallPerspectiveButton.onClick.AddListener(OnToggleWallPerspectiveClicked);
+                clone.SetActive(false);
+            }
+            else if (_toggleWallPerspectiveButton != null)
+            {
+                _toggleWallPerspectiveButton.onClick.AddListener(OnToggleWallPerspectiveClicked);
             }
 
             if (_cardTemplate != null)
@@ -100,6 +117,18 @@ namespace DreamCafe.SystemControl.UI
                 _unequipButton.gameObject.SetActive(_targetSlot.CurrentDecorItem != null);
             }
 
+            // 2.5 Nút xoay góc nhìn tường (chỉ hiện khi là ô tường)
+            if (_toggleWallPerspectiveButton != null)
+            {
+                bool isWall = _targetSlot.AllowedCategory == DecorCategory.WallDecor;
+                _toggleWallPerspectiveButton.gameObject.SetActive(isWall);
+                if (isWall && _wallPerspectiveButtonText != null)
+                {
+                    bool isLeft = _targetSlot.WallPerspectiveSetting == WallPerspective.LeftWall;
+                    _wallPerspectiveButtonText.text = isLeft ? "🔄 Tường Trái" : "🔄 Tường Phải";
+                }
+            }
+
             // 3. Xóa các card cũ
             foreach (var card in _spawnedCards)
             {
@@ -122,6 +151,15 @@ namespace DreamCafe.SystemControl.UI
                     }
                     _spawnedCards.Add(cardGo);
                 }
+            }
+        }
+
+        private void OnToggleWallPerspectiveClicked()
+        {
+            if (_targetSlot != null && _targetSlot.AllowedCategory == DecorCategory.WallDecor)
+            {
+                _targetSlot.ToggleWallPerspective();
+                Refresh();
             }
         }
 

@@ -19,7 +19,7 @@ MonoBehaviour:
   _description: "T\u1ED1c \u0111\u1ED9 sinh ti\u1EC1n t\u1EF1 \u0111\u1ED9ng m\u1ED7i
     gi\xE2y thu \u0111\u01B0\u1EE3c t\u1EEB doanh thu qu\xE1n v\xE0 buff t\u1EEB
     c\xE1c m\xF3n n\u1ED9i th\u1EA5t."
-  _icon: {fileID: -155657956441982478, guid: 0e5084618faaf934b8a4301910a57bec, type: 3}
+  _icon: {fileID: 2263797931622171359, guid: 85d817e0ac3659942ad4174c235045cc, type: 3}
   _startingValue: 0
   _minValue: 0
   _maxValue: 9999999

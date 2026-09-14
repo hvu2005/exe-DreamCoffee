@@ -1,10 +1,30 @@
 using System;
+using System.Collections.Generic;
 using DreamCafe.DataControl;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace DreamCafe.SystemControl.Decor
 {
+    /// <summary>
+    /// Góc nhìn tường: Tường Trái (Slope +0.5 / Mặc định) hoặc Tường Phải (Slope -0.5 / Lật 180° Y).
+    /// </summary>
+    public enum WallPerspective
+    {
+        LeftWall = 0,   // Tường Trái / Tường Sau (Slope +0.5)
+        RightWall = 1   // Tường Phải (Slope -0.5 / Lật 180° Y)
+    }
+
+    /// <summary>
+    /// Cấu hình độ lệch vị trí spawn (local offset) của từng món nội thất cụ thể trên slot.
+    /// </summary>
+    [Serializable]
+    public class ItemSpawnOffset
+    {
+        public string itemId = string.Empty;
+        public Vector2 offset = Vector2.zero;
+    }
+
     /// <summary>
     /// Vị trí đặt nội thất cố định (Slot-based Node) trong quán cà phê theo hệ tọa độ 2.5D Isometric.
     /// Quản lý việc hiển thị mô hình nội thất, cung cấp điểm neo ghế ngồi (SeatAnchor) cho khách,
@@ -29,6 +49,17 @@ namespace DreamCafe.SystemControl.Decor
         [Header("Chỉ báo ô trống (Empty Indicator)")]
         [SerializeField] private GameObject _emptyIndicator;
 
+        [Header("Góc nhìn tường (Wall Perspective)")]
+        [SerializeField] private WallPerspective _wallPerspective = WallPerspective.LeftWall;
+
+        [Header("Lớp hiển thị (Sorting Layer & Order Override)")]
+        [SerializeField] private bool _overrideSorting = false;
+        [SerializeField] private string _customSortingLayer = "Planter";
+        [SerializeField] private int _customSortingOrder = 18;
+
+        [Header("Độ lệch vị trí tùy chỉnh theo từng Item")]
+        [SerializeField] private List<ItemSpawnOffset> _itemOffsets = new();
+
         private GameObject _spawnedInstance;
         private DecorItem _currentDecorItem;
         private bool[] _seatOccupiedFlags = Array.Empty<bool>();
@@ -43,11 +74,24 @@ namespace DreamCafe.SystemControl.Decor
         public DecorItem CurrentDecorItem => _currentDecorItem;
         public int TotalSeats => _seatAnchors.Length;
         public GameObject EmptyIndicator { get => _emptyIndicator; set => _emptyIndicator = value; }
+        public Transform MountPoint => _mountPoint != null ? _mountPoint : transform;
+        public GameObject SpawnedInstance => _spawnedInstance;
+        public IReadOnlyList<ItemSpawnOffset> ItemOffsets => _itemOffsets;
+        public WallPerspective WallPerspectiveSetting => _wallPerspective;
+        public bool OverrideSorting => _overrideSorting;
+        public string CustomSortingLayer => _customSortingLayer;
+        public int CustomSortingOrder => _customSortingOrder;
 
         private void Awake()
         {
             if (_mountPoint == null) _mountPoint = transform;
             _seatOccupiedFlags = new bool[_seatAnchors.Length];
+
+            // Bảo đảm slot tường và các phần tử con luôn giữ góc chuẩn (0, 0, 0), góc nhìn do WallPerspective điều khiển
+            if (_allowedCategory == DecorCategory.WallDecor)
+            {
+                NormalizeWallSlotTransforms();
+            }
 
             // Bảo đảm luôn có Collider2D để nhận tương tác OnMouseDown
             if (GetComponent<Collider2D>() == null)
@@ -57,8 +101,22 @@ namespace DreamCafe.SystemControl.Decor
             }
         }
 
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (_allowedCategory == DecorCategory.WallDecor)
+            {
+                NormalizeWallSlotTransforms();
+            }
+
+            UpdateWallPerspectiveVisuals();
+        }
+#endif
+
         private void Start()
         {
+            UpdateWallPerspectiveVisuals();
+
             if (_emptyIndicator != null)
             {
                 _emptyIndicator.SetActive(_currentDecorItem == null);
@@ -76,30 +134,264 @@ namespace DreamCafe.SystemControl.Decor
             SlotTapped?.Invoke(this);
         }
 
+        private void ClearMountPointChildren()
+        {
+            if (_mountPoint != null)
+            {
+                for (int i = _mountPoint.childCount - 1; i >= 0; i--)
+                {
+                    var child = _mountPoint.GetChild(i).gameObject;
+                    DestroyImmediate(child);
+                }
+            }
+            _spawnedInstance = null;
+        }
+
+        /// <summary>
+        /// Kiểm tra xem slot có cấu hình offset riêng cho item này hay không.
+        /// </summary>
+        public bool HasCustomOffset(string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId)) return false;
+            for (int i = 0; i < _itemOffsets.Count; i++)
+            {
+                if (_itemOffsets[i] != null && _itemOffsets[i].itemId == itemId) return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Lấy độ lệch vị trí (local offset) của item trên slot này.
+        /// </summary>
+        public Vector2 GetItemOffset(string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId)) return Vector2.zero;
+            for (int i = 0; i < _itemOffsets.Count; i++)
+            {
+                if (_itemOffsets[i] != null && _itemOffsets[i].itemId == itemId) return _itemOffsets[i].offset;
+            }
+            return Vector2.zero;
+        }
+
+        /// <summary>
+        /// Lấy offset hiệu dụng: nếu slot có offset riêng thì ưu tiên dùng, nếu không thì dùng DefaultSpawnOffset của item.
+        /// </summary>
+        public Vector2 GetEffectiveOffset(DecorItem item)
+        {
+            if (item == null) return Vector2.zero;
+            return HasCustomOffset(item.Id) ? GetItemOffset(item.Id) : item.DefaultSpawnOffset;
+        }
+
+        /// <summary>
+        /// Gán hoặc cập nhật offset cho một item trên slot này. Cập nhật ngay mô hình nếu đang hiển thị.
+        /// </summary>
+        public void SetItemOffset(string itemId, Vector2 offset)
+        {
+            if (string.IsNullOrEmpty(itemId)) return;
+            bool found = false;
+            for (int i = 0; i < _itemOffsets.Count; i++)
+            {
+                if (_itemOffsets[i] != null && _itemOffsets[i].itemId == itemId)
+                {
+                    _itemOffsets[i].offset = offset;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                _itemOffsets.Add(new ItemSpawnOffset { itemId = itemId, offset = offset });
+            }
+
+            if (_spawnedInstance != null && _currentDecorItem != null && _currentDecorItem.Id == itemId)
+            {
+                _spawnedInstance.transform.localPosition = (Vector3)offset;
+            }
+        }
+
+        /// <summary>
+        /// Xóa bỏ cấu hình offset riêng cho item (trở về dùng DefaultSpawnOffset của item).
+        /// </summary>
+        public bool RemoveItemOffset(string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId)) return false;
+            for (int i = 0; i < _itemOffsets.Count; i++)
+            {
+                if (_itemOffsets[i] != null && _itemOffsets[i].itemId == itemId)
+                {
+                    _itemOffsets.RemoveAt(i);
+                    if (_spawnedInstance != null && _currentDecorItem != null && _currentDecorItem.Id == itemId)
+                    {
+                        _spawnedInstance.transform.localPosition = (Vector3)_currentDecorItem.DefaultSpawnOffset;
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Thay đổi góc nhìn phối cảnh tường (Tường Trái / Tường Phải).
+        /// </summary>
+        public void SetWallPerspective(WallPerspective perspective)
+        {
+            _wallPerspective = perspective;
+            UpdateWallPerspectiveVisuals();
+        }
+
+        /// <summary>
+        /// Chuyển đổi qua lại giữa góc tường trái và tường phải.
+        /// </summary>
+        public void ToggleWallPerspective()
+        {
+            _wallPerspective = (_wallPerspective == WallPerspective.LeftWall)
+                ? WallPerspective.RightWall
+                : WallPerspective.LeftWall;
+            UpdateWallPerspectiveVisuals();
+        }
+
+        /// <summary>
+        /// Chuẩn hóa rotation của slot tường về (0,0,0) để tránh việc xoay 3D làm ngược hướng tranh với ô slot.
+        /// </summary>
+        public void NormalizeWallSlotTransforms()
+        {
+            if (transform.localEulerAngles != Vector3.zero)
+            {
+                transform.localRotation = Quaternion.identity;
+            }
+            if (_mountPoint != null && _mountPoint.localEulerAngles != Vector3.zero)
+            {
+                _mountPoint.localRotation = Quaternion.identity;
+            }
+            if (_emptyIndicator != null && _emptyIndicator.transform.localEulerAngles != Vector3.zero)
+            {
+                _emptyIndicator.transform.localRotation = Quaternion.identity;
+            }
+        }
+
+        /// <summary>
+        /// Cập nhật hình ảnh góc nghiêng của item đang hiển thị và chỉ báo ô trống theo góc tường.
+        /// </summary>
+        public void UpdateWallPerspectiveVisuals()
+        {
+            if (_allowedCategory == DecorCategory.WallDecor)
+            {
+                NormalizeWallSlotTransforms();
+            }
+
+            if (_emptyIndicator != null)
+            {
+                var indSr = _emptyIndicator.GetComponentInChildren<SpriteRenderer>();
+                if (indSr != null)
+                {
+                    indSr.flipX = (_allowedCategory == DecorCategory.WallDecor && _wallPerspective == WallPerspective.RightWall);
+                }
+            }
+
+            if (_spawnedInstance != null && _currentDecorItem != null)
+            {
+                ApplyWallPerspectiveToInstance(_spawnedInstance, _currentDecorItem);
+            }
+        }
+
+        /// <summary>
+        /// Áp dụng sprite hoặc lật ảnh phù hợp với góc tường cho GameObject hiển thị.
+        /// </summary>
+        public void ApplyWallPerspectiveToInstance(GameObject instance, DecorItem item)
+        {
+            if (instance == null || item == null) return;
+            if (_allowedCategory != DecorCategory.WallDecor) return;
+
+            var sr = instance.GetComponentInChildren<SpriteRenderer>();
+            if (sr == null) return;
+
+            if (_wallPerspective == WallPerspective.RightWall)
+            {
+                if (item.RightWallSprite != null)
+                {
+                    sr.sprite = item.RightWallSprite;
+                    sr.flipX = false;
+                }
+                else
+                {
+                    sr.flipX = true;
+                }
+                instance.transform.localRotation = Quaternion.identity;
+            }
+            else
+            {
+                // LeftWall: Sử dụng sprite chuẩn gốc của item
+                var origSr = item.Prefab != null ? item.Prefab.GetComponentInChildren<SpriteRenderer>() : null;
+                if (origSr != null && origSr.sprite != null)
+                {
+                    sr.sprite = origSr.sprite;
+                }
+                sr.flipX = false;
+                instance.transform.localRotation = Quaternion.identity;
+            }
+
+            // Bảo vệ lộn ngược nếu trục Up hướng xuống
+            if (instance.transform.up.y < -0.1f)
+            {
+                instance.transform.localRotation = Quaternion.Euler(0f, 0f, 180f);
+            }
+        }
+
+        /// <summary>
+        /// Tự động áp dụng lớp hiển thị (Sorting Layer) để chậu hoa / đồ trang trí lên trước bàn ghế.
+        /// </summary>
+        public void ApplySortingToInstance(GameObject instance)
+        {
+            if (instance == null) return;
+
+            // Nếu là chậu hoa OutdoorPlanter hoặc được đánh dấu ghi đè sorting
+            if (_allowedCategory == DecorCategory.OutdoorPlanter || _overrideSorting)
+            {
+                string targetLayer = (_overrideSorting && !string.IsNullOrEmpty(_customSortingLayer))
+                    ? _customSortingLayer
+                    : "Planter";
+                int targetOrder = _overrideSorting ? _customSortingOrder : 18;
+
+                var srs = instance.GetComponentsInChildren<SpriteRenderer>(true);
+                for (int i = 0; i < srs.Length; i++)
+                {
+                    srs[i].sortingLayerName = targetLayer;
+                    srs[i].sortingOrder = targetOrder;
+                }
+            }
+        }
+
         /// <summary>
         /// Hiển thị mô hình nội thất tại slot này.
         /// </summary>
         public void DisplayItem(DecorItem item)
         {
-            if (_spawnedInstance != null)
-            {
-                DestroyImmediate(_spawnedInstance);
-                _spawnedInstance = null;
-            }
-
+            ClearMountPointChildren();
             _currentDecorItem = item;
 
             if (item != null && item.Prefab != null)
             {
                 _spawnedInstance = Instantiate(item.Prefab, _mountPoint);
-                _spawnedInstance.transform.localPosition = Vector3.zero;
+                Vector3 effectiveOffset = (Vector3)GetEffectiveOffset(item);
+                _spawnedInstance.transform.localPosition = effectiveOffset;
                 _spawnedInstance.transform.localRotation = Quaternion.identity;
                 _spawnedInstance.transform.localScale = item.Prefab.transform.localScale;
+
+                // Tự động căn chỉnh theo góc nhìn tường
+                ApplyWallPerspectiveToInstance(_spawnedInstance, item);
+
+                // Tự động áp dụng Sorting Layer (chậu hoa lên trước bàn ghế)
+                ApplySortingToInstance(_spawnedInstance);
             }
 
             if (_emptyIndicator != null)
             {
                 _emptyIndicator.SetActive(item == null);
+                var indSr = _emptyIndicator.GetComponentInChildren<SpriteRenderer>();
+                if (indSr != null)
+                {
+                    indSr.flipX = (_allowedCategory == DecorCategory.WallDecor && _wallPerspective == WallPerspective.RightWall);
+                }
             }
 
             SetPromptBubble(false);
@@ -110,12 +402,7 @@ namespace DreamCafe.SystemControl.Decor
         /// </summary>
         public void ClearDisplay()
         {
-            if (_spawnedInstance != null)
-            {
-                DestroyImmediate(_spawnedInstance);
-                _spawnedInstance = null;
-            }
-
+            ClearMountPointChildren();
             _currentDecorItem = null;
 
             if (_emptyIndicator != null)

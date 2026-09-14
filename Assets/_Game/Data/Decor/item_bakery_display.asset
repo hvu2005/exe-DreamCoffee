@@ -29,3 +29,4 @@ MonoBehaviour:
   _moneyPerSecondBonus: 15
   _icon: {fileID: -6308000504936535333, guid: 689d6d99dea9901468714f050a8cedca, type: 3}
   _prefab: {fileID: 8304596265142406704, guid: e9a57e92b0563224494db1b38a9de56f, type: 3}
+  _defaultSpawnOffset: {x: 0.42, y: 0.25}
