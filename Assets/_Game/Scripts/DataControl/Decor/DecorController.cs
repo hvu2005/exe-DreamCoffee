@@ -91,7 +91,14 @@ namespace DreamCafe.DataControl
                 RegisterZone(zone);
             }
 
+            // Mặc định quầy bar chính luôn được trang bị sẵn (quầy phục vụ cốt lõi của quán)
+            if (_items.ContainsKey("item_counter_emerald") && !_slotAssignments.ContainsKey("slot_counter_main"))
+            {
+                _slotAssignments["slot_counter_main"] = "item_counter_emerald";
+            }
+
             RecalculateBuffs();
+            Changed?.Invoke();
         }
 
         // =====================================================================

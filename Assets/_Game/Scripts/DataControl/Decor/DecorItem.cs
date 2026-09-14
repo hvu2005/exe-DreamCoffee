@@ -38,6 +38,10 @@ namespace DreamCafe.DataControl
         [Header("Trực quan")]
         [SerializeField] private Sprite _icon;
         [SerializeField] private GameObject _prefab;
+        [SerializeField, Tooltip("Độ lệch vị trí spawn mặc định trên mọi slot (nếu slot không có cấu hình riêng)")]
+        private Vector2 _defaultSpawnOffset = Vector2.zero;
+        [SerializeField, Tooltip("Sprite tương ứng khi đặt trên tường bên phải (slope -0.5 / lật 180° Y). Nếu để trống sẽ tự động lật Transform.")]
+        private Sprite _rightWallSprite;
 
         // Public Getters
         public string Id => _id;
@@ -56,5 +60,7 @@ namespace DreamCafe.DataControl
         public float MoneyPerSecondBonus => _moneyPerSecondBonus;
         public Sprite Icon => _icon;
         public GameObject Prefab => _prefab;
+        public Vector2 DefaultSpawnOffset => _defaultSpawnOffset;
+        public Sprite RightWallSprite => _rightWallSprite;
     }
 }

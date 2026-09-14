@@ -15,7 +15,8 @@ MonoBehaviour:
   _id: item_planter_hydrangea
   _displayName: "B\u1ED3n Hoa C\u1EA9m T\xFA C\u1EA7u"
   _description: "B\u1ED3n hoa g\u1ED7 n\u1EDF r\u1ED9 c\u1EA9m t\xFA c\u1EA7u tr\u1EAFng,
-    l\xE0m \u0111\u1EB9p th\xEAm cho m\u1EB7t ti\u1EC1n qu\xE1n."
+    l\xE0m \u0111\u1EB9p th\xEAm cho m\u1EB7t ti\u1EC1n qu\xE1n v\u1EDBi g\xF3c nh\xECn
+    s\xE0n Isometric."
   _category: 5
   _theme: 3
   _tier: 2
@@ -29,3 +30,5 @@ MonoBehaviour:
   _moneyPerSecondBonus: 3
   _icon: {fileID: -749486346710899425, guid: 689d6d99dea9901468714f050a8cedca, type: 3}
   _prefab: {fileID: 4151053617778297796, guid: 47dd4d01b6435c24fbf4c3922cc6ed0c, type: 3}
+  _defaultSpawnOffset: {x: 0, y: 0}
+  _rightWallSprite: {fileID: 0}

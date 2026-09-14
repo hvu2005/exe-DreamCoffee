@@ -28,5 +28,5 @@ MonoBehaviour:
   _tipChanceBonus: 0.05
   _seatingCapacity: 0
   _moneyPerSecondBonus: 5
-  _icon: {fileID: 21300000, guid: 5d7a98b52f21ff844aeee051600a3381, type: 3}
+  _icon: {fileID: -8875721451221907604, guid: d6251f1775430c94fb46b7ef2a76c667, type: 3}
   _prefab: {fileID: 2969490807658446018, guid: 7290df94cac74084fb18436cee7ce0b5, type: 3}

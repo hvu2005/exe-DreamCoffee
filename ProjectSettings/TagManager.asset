@@ -44,5 +44,8 @@ TagManager:
   - name: UI
     uniqueID: 3471867689
     locked: 0
+  - name: Planter
+    uniqueID: 3093891405
+    locked: 0
   m_RenderingLayers:
   - Default
