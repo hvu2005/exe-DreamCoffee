@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 859873249008586251}
   - component: {fileID: 1490636354623918607}
   - component: {fileID: 1920507353366569674}
-  - component: {fileID: 6042494845231777106}
   m_Layer: 0
   m_Name: OrderTicketPrefab
   m_TagString: Untagged
@@ -45,13 +44,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 261792952208878771}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3f6e022ce99e7745958df2ab3a9cbfd, type: 3}
-  m_Name: 
+  m_Script: {fileID: 11500000, guid: f7b82ad80f5b2a54e9222c89bdf56bc5, type: 3}
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.Gameplay.Order.OrderTicketView
-  background: {fileID: 0}
-  itemLabel: {fileID: 5556820112278009294}
-  colorPending: {r: 1, g: 0.85, b: 0.1, a: 1}
-  colorReady: {r: 0.2, g: 0.9, b: 0.3, a: 1}
+  _background: {fileID: 6868533868804860505}
+  _itemLabel: {fileID: 5556820112278009294}
+  _colorPending: {r: 1, g: 0.85, b: 0.1, a: 1}
+  _colorReady: {r: 0.2, g: 0.9, b: 0.3, a: 1}
 --- !u!114 &1920507353366569674
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61,25 +60,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 261792952208878771}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed800403af506a6499205eeb9462d001, type: 3}
-  m_Name: 
+  m_Script: {fileID: 11500000, guid: 4b3a9ef9625dfdc4b850f85607594deb, type: 3}
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.Gameplay.Order.OrderTicketController
---- !u!114 &6042494845231777106
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 261792952208878771}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3f6e022ce99e7745958df2ab3a9cbfd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.Gameplay.Order.OrderTicketView
-  background: {fileID: 6868533868804860505}
-  itemLabel: {fileID: 0}
-  colorPending: {r: 1, g: 0.85, b: 0.1, a: 1}
-  colorReady: {r: 0.2, g: 0.9, b: 0.3, a: 1}
+  _view: {fileID: 1490636354623918607}
 --- !u!1 &3869966398745670497
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a272b10859a620843812a86745dda33f, type: 3}
+  m_Name: item_counter_emerald
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.DecorItem
+  _id: item_counter_emerald
+  _displayName: "Qu\u1EA7y Bar Xanh Ng\u1ECDc"
+  _description: "Qu\u1EA7y pha ch\u1EBF g\u1ED7 s\u1ED3i k\u1EBFt h\u1EE3p xanh ng\u1ECDc
+    sang tr\u1ECDng, trang b\u1ECB m\xE1y pha c\xE0 ph\xEA v\xE0 qu\u1EA7y thanh
+    to\xE1n."
+  _category: 1
+  _theme: 2
+  _tier: 1
+  _price: 0
+  _requiredReputation: 0
+  _reputationBonus: 200
+  _isDefaultUnlocked: 1
+  _patienceBonusPercent: 0
+  _tipChanceBonus: 0.05
+  _seatingCapacity: 0
+  _moneyPerSecondBonus: 5
+  _icon: {fileID: -8875721451221907604, guid: d6251f1775430c94fb46b7ef2a76c667, type: 3}
+  _prefab: {fileID: 2969490807658446018, guid: 7290df94cac74084fb18436cee7ce0b5, type: 3}

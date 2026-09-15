@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a272b10859a620843812a86745dda33f, type: 3}
+  m_Name: item_table_wood_4seats
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.DecorItem
+  _id: item_table_wood_4seats
+  _displayName: "B\xE0n G\u1ED7 L\u1EDBn 4 Gh\u1EBF"
+  _description: "B\xE0n \u0103n r\u1ED9ng r\xE3i ph\u1EE5c v\u1EE5 nh\xF3m kh\xE1ch
+    4 ng\u01B0\u1EDDi, t\u0103ng s\u1EE9c ch\u1EE9a c\u1EE7a qu\xE1n."
+  _category: 0
+  _theme: 0
+  _tier: 2
+  _price: 80000
+  _requiredReputation: 0
+  _reputationBonus: 300
+  _isDefaultUnlocked: 0
+  _patienceBonusPercent: 0.1
+  _tipChanceBonus: 0.06
+  _seatingCapacity: 4
+  _moneyPerSecondBonus: 0
+  _icon: {fileID: 2808107812966753301, guid: 516e11a0edc5a664d9093152c05a019d, type: 3}
+  _prefab: {fileID: 7969115705376355583, guid: ef9b27c73c153024f9a2fc081e0b7674, type: 3}
+  _defaultSpawnOffset: {x: 0, y: 0}
+  _rightWallSprite: {fileID: 0}

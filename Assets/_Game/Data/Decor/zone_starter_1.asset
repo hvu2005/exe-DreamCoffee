@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3faf83a2684b23c4eb295d2e8dba0d4a, type: 3}
+  m_Name: zone_starter_1
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.ExpansionZoneData
+  _zoneId: 0
+  _zoneName: "Qu\u1EA7y Bar & S\u1EA3nh Ban \u0110\u1EA7u"
+  _description: "Khu v\u1EF1c c\u01A1 b\u1EA3n ban \u0111\u1EA7u c\u1EE7a qu\xE1n
+    c\xE0 ph\xEA g\u1ED3m qu\u1EA7y bar v\xE0 b\xE0n \u0111\xF4i."
+  _unlockPrice: 0
+  _requiredReputation: 0
+  _reputationBonus: 0
+  _isDefaultUnlocked: 1
+  _slotIdsInZone:
+  - slot_counter_main
+  - slot_table_01
+  - slot_table_02
+  - slot_table_03
+  - slot_ac_01
+  - slot_plant_01
+  - slot_planter_01
+  - slot_wall_01
+  - slot_wall_02

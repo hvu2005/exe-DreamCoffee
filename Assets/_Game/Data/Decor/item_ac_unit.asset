@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a272b10859a620843812a86745dda33f, type: 3}
+  m_Name: item_ac_unit
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.DecorItem
+  _id: item_ac_unit
+  _displayName: "M\xE1y L\u1EA1nh \u0110\u1EE9ng"
+  _description: "M\xE1y \u0111i\u1EC1u h\xF2a \u0111\u1EE9ng c\xF4ng su\u1EA5t l\u1EDBn
+    l\xE0m m\xE1t to\xE0n b\u1ED9 kh\xF4ng gian qu\xE1n."
+  _category: 2
+  _theme: 2
+  _tier: 1
+  _price: 40000
+  _requiredReputation: 0
+  _reputationBonus: 120
+  _isDefaultUnlocked: 1
+  _patienceBonusPercent: 0.05
+  _tipChanceBonus: 0.05
+  _seatingCapacity: 0
+  _moneyPerSecondBonus: 10
+  _icon: {fileID: -5117330992362626391, guid: 4d6cfd0d7103b274598521434d7e3e01, type: 3}
+  _prefab: {fileID: 6127076153422231455, guid: af6506a7da9596944855b4ee813045a8, type: 3}
+  _defaultSpawnOffset: {x: -0.09, y: 0.61}
+  _rightWallSprite: {fileID: 0}

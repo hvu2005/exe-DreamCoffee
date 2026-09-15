@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fee443889e6fb143ac2886b221175c2, type: 3}
+  m_Name: DecorRepository
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.ScriptableDecorRepository
+  _items:
+  - {fileID: 11400000, guid: 3812a66e5378f964ca823f31997645a7, type: 2}
+  - {fileID: 11400000, guid: f995cb78e64439146a5f133b3d1d1b84, type: 2}
+  - {fileID: 11400000, guid: 541332a8858e3a444b540480a610c75c, type: 2}
+  - {fileID: 11400000, guid: 700977905e70dee46b29eb3debc14ba6, type: 2}
+  - {fileID: 11400000, guid: f4c1fde844f21174baa1c365d15471c9, type: 2}
+  - {fileID: 11400000, guid: 82f1947ac15fa1e409412607dbdf5fb2, type: 2}
+  - {fileID: 11400000, guid: 448efb02d934c304081e697cc6d560c4, type: 2}
+  - {fileID: 11400000, guid: 159181444683e674596cc3a0c8e70e3a, type: 2}
+  - {fileID: 11400000, guid: 7c46785f37ba56a4f8fb16801b140698, type: 2}
+  - {fileID: 11400000, guid: d73765ccf0cee4e45832b3c7ccac5504, type: 2}
+  _zones:
+  - {fileID: 11400000, guid: 499d3f14cf362b04cbd26a94f5a55e0b, type: 2}
+  - {fileID: 11400000, guid: e0fdb22f59aafc34080e44574eb3a163, type: 2}
+  - {fileID: 11400000, guid: 42d4c3fb9ef637e46b43ee47e27f2bac, type: 2}

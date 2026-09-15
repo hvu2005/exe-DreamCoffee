@@ -1,0 +1,507 @@
+fileFormatVersion: 2
+guid: 689d6d99dea9901468714f050a8cedca
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2081573722371515623
+    second: cafe_furniture_pack_transparent_0
+  - first:
+      213: 6454915587382577115
+    second: cafe_furniture_pack_transparent_1
+  - first:
+      213: -757542610692442138
+    second: cafe_furniture_pack_transparent_2
+  - first:
+      213: -7723262568877491588
+    second: cafe_furniture_pack_transparent_3
+  - first:
+      213: 7251984635627026207
+    second: cafe_furniture_pack_transparent_4
+  - first:
+      213: -2028742269044057223
+    second: cafe_furniture_pack_transparent_5
+  - first:
+      213: -6112251779649027944
+    second: cafe_furniture_pack_transparent_6
+  - first:
+      213: 5271860043938237977
+    second: cafe_furniture_pack_transparent_7
+  - first:
+      213: 133162110332276761
+    second: cafe_furniture_pack_transparent_8
+  - first:
+      213: -4623377776886839519
+    second: cafe_furniture_pack_transparent_9
+  - first:
+      213: -6258527518387579026
+    second: cafe_furniture_pack_transparent_10
+  - first:
+      213: -1564312782796027581
+    second: cafe_furniture_pack_transparent_11
+  - first:
+      213: -5708327044830654300
+    second: cafe_furniture_pack_transparent_12
+  - first:
+      213: 1891913374532350287
+    second: cafe_furniture_pack_transparent_13
+  - first:
+      213: 491859874753451000
+    second: cafe_furniture_pack_transparent_14
+  - first:
+      213: -2393609355339466640
+    second: cafe_furniture_pack_transparent_15
+  - first:
+      213: -5446171889208238091
+    second: cafe_furniture_pack_transparent_16
+  - first:
+      213: -8008430501983045431
+    second: cafe_furniture_pack_transparent_17
+  - first:
+      213: -1089692859806839177
+    second: cafe_furniture_pack_transparent_18
+  - first:
+      213: -4778968691042301310
+    second: cafe_furniture_pack_transparent_19
+  - first:
+      213: -106309711447683929
+    second: cafe_furniture_pack_transparent_20
+  - first:
+      213: 8519655211286371152
+    second: cafe_furniture_pack_transparent_21
+  - first:
+      213: -7661777185069777914
+    second: cafe_furniture_pack_transparent_22
+  - first:
+      213: 2786832384207232482
+    second: sprite_table_wood_round
+  - first:
+      213: -1381737598012714956
+    second: sprite_sofa_armchair
+  - first:
+      213: 7060190213728262478
+    second: sprite_chair
+  - first:
+      213: -5379987700054343127
+    second: sprite_table_4seats
+  - first:
+      213: -6308000504936535333
+    second: sprite_bakery_display
+  - first:
+      213: -1587332790156226099
+    second: sprite_plant_monstera
+  - first:
+      213: -749486346710899425
+    second: sprite_planter_hydrangea
+  - first:
+      213: 8695247613123461345
+    second: sprite_chair_dining
+  - first:
+      213: -5928587846482899283
+    second: sprite_bakery_fridge
+  - first:
+      213: -8826876588158706320
+    second: sprite_sofa_armchair_r
+  - first:
+      213: -5117645015084243877
+    second: sprite_sofa_armchair_l
+  - first:
+      213: 7477120591662552731
+    second: sprite_chair_r
+  - first:
+      213: 2496391936774365588
+    second: sprite_chair_l
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 1
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: sprite_table_wood_round
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 688
+        width: 218
+        height: 232
+      alignment: 9
+      pivot: {x: 0.5, y: 0.25}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ed1a35c941dca620800000000000000
+      internalID: 2786832384207232482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprite_sofa_armchair_r
+      rect:
+        serializedVersion: 2
+        x: 390
+        y: 688
+        width: 242
+        height: 274
+      alignment: 9
+      pivot: {x: 0.5, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07d96968282a08580800000000000000
+      internalID: -8826876588158706320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprite_sofa_armchair_l
+      rect:
+        serializedVersion: 2
+        x: 702
+        y: 688
+        width: 242
+        height: 274
+      alignment: 9
+      pivot: {x: 0.5, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b54ea5529f87af8b0800000000000000
+      internalID: -5117645015084243877
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprite_sofa_armchair
+      rect:
+        serializedVersion: 2
+        x: 390
+        y: 688
+        width: 242
+        height: 274
+      alignment: 9
+      pivot: {x: 0.5, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43096a1b9f413dce0800000000000000
+      internalID: -1381737598012714956
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprite_chair_r
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 386
+        width: 196
+        height: 255
+      alignment: 9
+      pivot: {x: 0.5, y: 0.18}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b961ec8009114c760800000000000000
+      internalID: 7477120591662552731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprite_chair_l
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 386
+        width: 191
+        height: 255
+      alignment: 9
+      pivot: {x: 0.5, y: 0.18}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 491e5937d37f4a220800000000000000
+      internalID: 2496391936774365588
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprite_chair
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 386
+        width: 196
+        height: 255
+      alignment: 9
+      pivot: {x: 0.5, y: 0.18}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4956f7c795daf160800000000000000
+      internalID: 7060190213728262478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprite_bakery_display
+      rect:
+        serializedVersion: 2
+        x: 668
+        y: 346
+        width: 283
+        height: 326
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdae54446fa7578a0800000000000000
+      internalID: -6308000504936535333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprite_plant_monstera
+      rect:
+        serializedVersion: 2
+        x: 424
+        y: 52
+        width: 213
+        height: 289
+      alignment: 9
+      pivot: {x: 0.5, y: 0.15}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc19866cc39a8f9e0800000000000000
+      internalID: -1587332790156226099
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sprite_planter_hydrangea
+      rect:
+        serializedVersion: 2
+        x: 701
+        y: 54
+        width: 250
+        height: 265
+      alignment: 9
+      pivot: {x: 0.5, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f15aa4c732a4995f0800000000000000
+      internalID: -749486346710899425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 6ee471396894b6c48bf630468bb36ae7
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      cafe_furniture_pack_transparent_0: 2081573722371515623
+      cafe_furniture_pack_transparent_1: 6454915587382577115
+      cafe_furniture_pack_transparent_10: -6258527518387579026
+      cafe_furniture_pack_transparent_11: -1564312782796027581
+      cafe_furniture_pack_transparent_12: -5708327044830654300
+      cafe_furniture_pack_transparent_13: 1891913374532350287
+      cafe_furniture_pack_transparent_14: 491859874753451000
+      cafe_furniture_pack_transparent_15: -2393609355339466640
+      cafe_furniture_pack_transparent_16: -5446171889208238091
+      cafe_furniture_pack_transparent_17: -8008430501983045431
+      cafe_furniture_pack_transparent_18: -1089692859806839177
+      cafe_furniture_pack_transparent_19: -4778968691042301310
+      cafe_furniture_pack_transparent_2: -757542610692442138
+      cafe_furniture_pack_transparent_20: -106309711447683929
+      cafe_furniture_pack_transparent_21: 8519655211286371152
+      cafe_furniture_pack_transparent_22: -7661777185069777914
+      cafe_furniture_pack_transparent_3: -7723262568877491588
+      cafe_furniture_pack_transparent_4: 7251984635627026207
+      cafe_furniture_pack_transparent_5: -2028742269044057223
+      cafe_furniture_pack_transparent_6: -6112251779649027944
+      cafe_furniture_pack_transparent_7: 5271860043938237977
+      cafe_furniture_pack_transparent_8: 133162110332276761
+      cafe_furniture_pack_transparent_9: -4623377776886839519
+      sprite_bakery_display: -6308000504936535333
+      sprite_bakery_fridge: -5928587846482899283
+      sprite_chair: 7060190213728262478
+      sprite_chair_dining: 8695247613123461345
+      sprite_chair_l: 2496391936774365588
+      sprite_chair_r: 7477120591662552731
+      sprite_plant_monstera: -1587332790156226099
+      sprite_planter_hydrangea: -749486346710899425
+      sprite_sofa_armchair: -1381737598012714956
+      sprite_sofa_armchair_l: -5117645015084243877
+      sprite_sofa_armchair_r: -8826876588158706320
+      sprite_table_4seats: -5379987700054343127
+      sprite_table_wood_round: 2786832384207232482
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
