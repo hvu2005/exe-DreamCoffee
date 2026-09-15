@@ -12,15 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d87f39734f16dd498e8e59c571b63ae, type: 3}
   m_Name: Mango
   m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.InventoryItem
-  id:
+  id: mango
   displayName: Mango
-  description:
+  description: 
   icon: {fileID: -7449966921979953886, guid: bf5d4c40796f877448dca9c4466e40f9, type: 3}
   tint: {r: 1, g: 1, b: 1, a: 1}
+  hexColor: '#F5A623'
   worldPrefab: {fileID: 6259152034383206533, guid: f58d56e08c9e4970936c1ae6a212b824, type: 3}
   category: 3
   unitLabel: crates
   basePrice: 8
   shelfLifeDays: 5
   maxQuantity: 200
-  quantity: 0
+  quantity: 10

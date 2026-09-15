@@ -1,3 +1,4 @@
+using DreamCafe.Core.Utils;
 using UnityEngine;
 
 namespace DreamCafe.DataControl
@@ -41,6 +42,9 @@ namespace DreamCafe.DataControl
         private Sprite icon;
         [SerializeField, Tooltip("Màu tint phủ lên icon — dùng cho biến thể cùng icon gốc.")]
         private Color tint = Color.white;
+        [SerializeField, HexColor]
+        [Tooltip("Màu của nguyên liệu khi đổ vào cốc pha chế. Lưu dưới dạng mã hex (vd #6F4E37); bỏ trống thì lấy theo Tint.")]
+        private string hexColor = "#FFFFFF";
         [SerializeField, Tooltip("Prefab hiển thị ngoài thế giới (vd: bao cà phê trên kệ) — có thể để trống.")]
         private GameObject worldPrefab;
 
@@ -69,6 +73,34 @@ namespace DreamCafe.DataControl
         public string Description => description;
         public Sprite Icon => icon;
         public Color Tint => tint;
+
+        /// <summary>Mã màu hex thô như designer gõ vào (vd "#6F4E37").</summary>
+        public string HexColor => hexColor;
+
+        /// <summary>
+        /// Màu nguyên liệu này đổ ra trong cốc, dịch từ <see cref="HexColor"/>. Mã sai cú pháp hoặc
+        /// bỏ trống thì rơi về <see cref="Tint"/> — cốc vẫn có màu chứ không thành đen thui.
+        /// Kết quả được nhớ lại theo chuỗi hex, đổi mã trong Inspector là tự dịch lại.
+        /// </summary>
+        public Color LiquidColor
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(hexColor)) return tint;
+
+                if (!string.Equals(_parsedHex, hexColor, System.StringComparison.Ordinal))
+                {
+                    _parsedHex = hexColor;
+                    if (!ColorUtility.TryParseHtmlString(hexColor.Trim(), out _parsedColor)) _parsedColor = tint;
+                }
+
+                return _parsedColor;
+            }
+        }
+
+        [System.NonSerialized] private string _parsedHex;
+        [System.NonSerialized] private Color _parsedColor;
+
         public GameObject WorldPrefab => worldPrefab;
         public ItemCategory Category => category;
         public string UnitLabel => unitLabel;

@@ -24,6 +24,9 @@ namespace DreamCafe.DataControl
         private CurrencyController _currencyController;
         private InventoryController _inventoryController;
 
+        /// <summary>Đang nạp tiến độ cũ — chặn việc ghi save đè lên chính cái vừa đọc lên.</summary>
+        private bool _restoringUnlocks;
+
         /// <summary>Controller quản lý dữ liệu Khách Hàng (CRUD).</summary>
         public CustomerController Customer => _customerController;
 
@@ -80,6 +83,7 @@ namespace DreamCafe.DataControl
             if (recipeRepo != null)
             {
                 _recipeController.AddRecipes(recipeRepo.GetAllRecipes());
+                RestoreUnlockedRecipes();
             }
 
             // Load nguyên liệu kho từ DatabaseManager (nếu có sẵn)
@@ -105,12 +109,32 @@ namespace DreamCafe.DataControl
             }
         }
 
+        /// <summary>
+        /// Mở khoá lại những công thức người chơi đã mò ra ở các lần chơi trước. Khách hàng đi kèm
+        /// cũng tự mở lại theo, vì mỗi lần UnlockRecipe đều chạy qua <see cref="OnRecipeUnlocked"/>.
+        /// </summary>
+        private void RestoreUnlockedRecipes()
+        {
+            // Bật cờ để khỏi ghi đè lại đúng cái vừa đọc lên: mỗi lần mở khoá đều kích Save().
+            _restoringUnlocks = true;
+            int restored = RecipeUnlockStore.Load(_recipeController);
+            _restoringUnlocks = false;
+
+            if (restored > 0)
+            {
+                Debug.Log($"[GameSystemsProvider] Khôi phục {restored} công thức đã mở khoá từ lần chơi trước.");
+            }
+        }
+
         private void OnRecipeUnlocked(RecipeItem recipe)
         {
             if (_customerController == null || _recipeController == null) return;
 
             var unlockedRecipeIds = new HashSet<string>(_recipeController.GetUnlocked().Select(r => r.Id));
             _customerController.CheckAutoUnlock(unlockedRecipeIds);
+
+            // Mò ra món mới là ghi ngay, không chờ tới lúc thoát game — tắt ngang vẫn không mất tiến độ.
+            if (!_restoringUnlocks) RecipeUnlockStore.Save(_recipeController);
         }
 
         private void OnDestroy()

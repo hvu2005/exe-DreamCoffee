@@ -12,15 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d87f39734f16dd498e8e59c571b63ae, type: 3}
   m_Name: Milk
   m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.InventoryItem
-  id:
+  id: milk
   displayName: Milk
-  description:
+  description: 
   icon: {fileID: -4010964557036326198, guid: 7aa421286b73f9d4aab22c02cd603e4d, type: 3}
   tint: {r: 1, g: 1, b: 1, a: 1}
+  hexColor: '#F7F1E3'
   worldPrefab: {fileID: 6259152034383206533, guid: f58d56e08c9e4970936c1ae6a212b824, type: 3}
   category: 3
   unitLabel: boxes
   basePrice: 10
   shelfLifeDays: 7
   maxQuantity: 999
-  quantity: 0
+  quantity: 12

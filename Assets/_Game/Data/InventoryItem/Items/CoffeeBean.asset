@@ -12,15 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d87f39734f16dd498e8e59c571b63ae, type: 3}
   m_Name: CoffeeBean
   m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.InventoryItem
-  id:
+  id: coffee_bean
   displayName: Coffee Bean
-  description:
+  description: 
   icon: {fileID: -171176057120639322, guid: fe9fc6a55b77cc24cbe56b7fe50f244b, type: 3}
   tint: {r: 1, g: 1, b: 1, a: 1}
+  hexColor: '#6F4E37'
   worldPrefab: {fileID: 6259152034383206533, guid: f58d56e08c9e4970936c1ae6a212b824, type: 3}
   category: 0
   unitLabel: bags
   basePrice: 20
   shelfLifeDays: 0
   maxQuantity: 999
-  quantity: 0
+  quantity: 15

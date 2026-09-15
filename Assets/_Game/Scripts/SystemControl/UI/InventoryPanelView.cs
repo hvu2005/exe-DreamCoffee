@@ -76,11 +76,15 @@ namespace DreamCafe.SystemControl.UI
                 if (slot != null) Destroy(slot.gameObject);
             _slots.Clear();
 
+            // Số lượng thật nằm ở kho runtime (đã bị pha chế/bán hàng trừ đi), không phải trên asset
+            // định nghĩa — asset chỉ giữ số tồn khởi điểm.
+            var inventory = GameSystemsProvider.Instance != null ? GameSystemsProvider.Instance.Inventory : null;
+
             foreach (var item in items)
             {
                 if (item == null) continue;
                 var slot = Instantiate(slotPrefab, grid);
-                slot.Bind(item);
+                slot.Bind(item, inventory != null ? inventory.GetQuantity(item.Id) : item.Quantity);
                 _slots.Add(slot);
             }
 

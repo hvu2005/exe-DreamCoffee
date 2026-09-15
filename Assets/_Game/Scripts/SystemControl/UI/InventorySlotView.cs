@@ -18,7 +18,14 @@ namespace DreamCafe.SystemControl.UI
         [SerializeField] private TMP_Text infoLabel;
         [SerializeField] private TMP_Text quantityLabel;
 
-        public void Bind(InventoryItem item)
+        /// <summary>Hiển thị theo số lượng ghi trong chính item (bản runtime của kho, hoặc asset định nghĩa).</summary>
+        public void Bind(InventoryItem item) => Bind(item, item != null ? item.Quantity : 0);
+
+        /// <summary>
+        /// Hiển thị với số lượng truyền vào — dùng khi số thật nằm ở InventoryController chứ không
+        /// phải trên asset định nghĩa (vd: sau khi pha chế đã trừ kho).
+        /// </summary>
+        public void Bind(InventoryItem item, int quantity)
         {
             nameLabel.text = item.DisplayName;
 
@@ -32,7 +39,7 @@ namespace DreamCafe.SystemControl.UI
                 ? $"Expires in {item.ShelfLifeDays} days"
                 : "Never expires";
 
-            quantityLabel.text = $"{item.Quantity} {item.UnitLabel}";
+            quantityLabel.text = $"{quantity} {item.UnitLabel}";
         }
 
         private static string Label(ItemCategory category) => category switch

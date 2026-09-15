@@ -12,15 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d87f39734f16dd498e8e59c571b63ae, type: 3}
   m_Name: GelatoVanilla
   m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.InventoryItem
-  id:
+  id: gelato_vanilla
   displayName: Vanilla Gelato
-  description:
+  description: 
   icon: {fileID: 3582345689821424049, guid: 3fd3f345ac5d0474dbf9d945e13dbbfd, type: 3}
   tint: {r: 1, g: 1, b: 1, a: 1}
+  hexColor: '#F3E5AB'
   worldPrefab: {fileID: 6259152034383206533, guid: f58d56e08c9e4970936c1ae6a212b824, type: 3}
   category: 2
   unitLabel: tubs
   basePrice: 25
   shelfLifeDays: 14
   maxQuantity: 100
-  quantity: 0
+  quantity: 8
