@@ -20,11 +20,14 @@ namespace DreamCafe.Gameplay.Customer
         public int StandIndex;
         public Transform StandPoint;
 
-        public DecorSlot Seat;
+        public GridOccupant Seat;
         public int SeatIndex;
-        public Transform SeatPoint;
+        public Vector3 SeatPoint;
 
         public Transform ExitPoint;
         public Action<CustomerController> OnFinished;
+
+        /// <summary>Xin chỗ ngồi khác khi chỗ đang giữ không dùng được nữa. False = quán hết chỗ.</summary>
+        public Func<CustomerController, bool> SeatReassignRequest;
     }
 }

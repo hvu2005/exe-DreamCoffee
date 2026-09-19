@@ -112,7 +112,15 @@ namespace DreamCafe.SystemControl.Decor
                     slot.ClearDisplay();
                 }
             }
+
+            RebuildGrid();
         }
+
+        /// <summary>
+        /// Dựng lại bản đồ ô gạch sau mỗi lần bố cục nội thất đổi — NavMesh khoét lỗ theo đó nên
+        /// khách đi vòng qua bàn mới kê mà không phải bake lại.
+        /// </summary>
+        private void RebuildGrid() => ShopGrid.Instance?.RebuildFromScene();
 
         private DecorSlot FindSlot(string slotId)
         {
@@ -147,6 +155,7 @@ namespace DreamCafe.SystemControl.Decor
             if (slot != null)
             {
                 slot.DisplayItem(item);
+                RebuildGrid();
             }
             else
             {
@@ -160,6 +169,7 @@ namespace DreamCafe.SystemControl.Decor
             if (slot != null)
             {
                 slot.ClearDisplay();
+                RebuildGrid();
             }
         }
 

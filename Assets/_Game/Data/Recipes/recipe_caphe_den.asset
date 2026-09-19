@@ -22,4 +22,5 @@ MonoBehaviour:
   - coffee_bean
   _craftTimeSeconds: 2.5
   _basePrice: 20000
+  _moneyPerSecondBonus: 1
   _isDefaultUnlocked: 1

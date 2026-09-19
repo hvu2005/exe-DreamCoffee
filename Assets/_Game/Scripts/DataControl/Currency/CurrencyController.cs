@@ -29,8 +29,11 @@ namespace DreamCafe.DataControl
         private float _moneyPerSecond = 0f;
         private float _reputation = 0f;
 
-        // Bộ đệm cộng dồn tiền theo giây để tránh cập nhật quá dày đặc
-        private float _mpsAccumulator = 0f;
+        /// <summary>Chu kỳ cộng tiền thụ động & ghi xuống DB: đúng 1 giây 1 lần.</summary>
+        public const float IncomeTickInterval = 1f;
+
+        // Bộ đếm thời gian dồn tới mốc 1 giây mới cộng tiền + ghi DB, tránh cập nhật mỗi frame
+        private float _tickTimer = 0f;
 
         private readonly System.Collections.Generic.Dictionary<CurrencyType, CurrencyItem> _definitions = new();
         private ICurrencyRepository _repository;
@@ -104,6 +107,11 @@ namespace DreamCafe.DataControl
             if (HasSavedData())
             {
                 Load();
+
+                // Tiền & danh tiếng là tiến độ của người chơi nên giữ nguyên từ save, nhưng MPS là
+                // chỉ số cấu hình: luôn nạp lại base từ DB để chỉnh starting value là có hiệu lực ngay,
+                // không bị save cũ (thường là 0) đè lên.
+                SetMoneyPerSecond(_repository.GetStartingValue(CurrencyType.MoneyPerSecond));
             }
             else
             {
@@ -157,7 +165,7 @@ namespace DreamCafe.DataControl
             _currentMoney = PlayerPrefs.GetFloat(PrefKeyMoney, 500_000f);
             _moneyPerSecond = PlayerPrefs.GetFloat(PrefKeyMPS, 0f);
             _reputation = PlayerPrefs.GetFloat(PrefKeyRep, 0f);
-            _mpsAccumulator = 0f;
+            _tickTimer = 0f;
             NotifyChanged(CurrencyType.Money, _currentMoney, 0);
             NotifyChanged(CurrencyType.MoneyPerSecond, _moneyPerSecond, 0);
             NotifyChanged(CurrencyType.Reputation, _reputation, 0);
@@ -320,23 +328,30 @@ namespace DreamCafe.DataControl
         }
 
         /// <summary>
-        /// Cập nhật thời gian thực: cộng tiền thụ động theo tốc độ MoneyPerSecond.
-        /// Được gọi từ một Runner/MonoBehaviour (vd: Update loop).
+        /// Cập nhật thời gian thực — được gọi mỗi frame từ một Runner/MonoBehaviour (vd: Update loop),
+        /// nhưng chỉ thực sự xử lý mỗi <see cref="IncomeTickInterval"/> giây 1 lần:
+        /// cộng MoneyPerSecond vào số dư, bắn sự kiện cho UI và ghi xuống DB (qua autosave).
         /// </summary>
-        public void Tick(float deltaTime)
+        /// <returns>True nếu vừa chạy qua một mốc 1 giây (đã cộng tiền &amp; ghi DB).</returns>
+        public bool Tick(float deltaTime)
         {
-            if (_moneyPerSecond <= 0f || deltaTime <= 0f) return;
+            if (deltaTime <= 0f) return false;
 
-            _mpsAccumulator += _moneyPerSecond * deltaTime;
+            _tickTimer += deltaTime;
+            if (_tickTimer < IncomeTickInterval) return false;
 
-            // Cộng tiền vào tài khoản khi bộ đệm đạt ít nhất 1 đồng
-            if (_mpsAccumulator >= 1f)
-            {
-                float gained = Mathf.Floor(_mpsAccumulator);
-                _mpsAccumulator -= gained;
-                _currentMoney += gained;
-                NotifyChanged(CurrencyType.Money, _currentMoney, gained);
-            }
+            // Gom nhiều chu kỳ lại nếu một frame bị khựng lâu hơn 1 giây (tránh mất tiền)
+            int elapsedTicks = Mathf.FloorToInt(_tickTimer / IncomeTickInterval);
+            _tickTimer -= elapsedTicks * IncomeTickInterval;
+
+            if (_moneyPerSecond <= 0f) return false;
+
+            float gained = _moneyPerSecond * elapsedTicks;
+            _currentMoney += gained;
+
+            // NotifyChanged -> Changed (UI refresh) + Save() xuống DB nếu bật autosave
+            NotifyChanged(CurrencyType.Money, _currentMoney, gained);
+            return true;
         }
 
         // =====================================================================
@@ -352,7 +367,7 @@ namespace DreamCafe.DataControl
             SetMoney(500_000f);
             SetMoneyPerSecond(0f);
             SetReputation(0f);
-            _mpsAccumulator = 0f;
+            _tickTimer = 0f;
         }
 
         private void NotifyChanged(CurrencyType type, float newValue, float delta)

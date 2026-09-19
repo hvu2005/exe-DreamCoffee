@@ -35,6 +35,15 @@ namespace DreamCafe.DataControl
         [SerializeField, Min(0f), Tooltip("Tốc độ cộng tiền thụ động trên giây (VNĐ/s)")]
         private float _moneyPerSecondBonus = 0f;
 
+        [Header("Kích thước trên lưới ô")]
+        [SerializeField, Tooltip("Số ô gạch món này chiếm trên sàn (ngang x dọc theo trục ô, không phải trục màn hình). " +
+            "Ghế/chậu cây = 1x1, tủ bánh = 2x1. Khối ô được căn giữa quanh ô của slot.")]
+        private Vector2Int _gridFootprint = Vector2Int.one;
+
+        [SerializeField, Tooltip("Ô chiếm thêm ngoài khối chữ nhật, tính lệch so với ô gốc. Trục ô đi chéo trên màn hình: " +
+            "+x chéo lên-phải, +y chéo lên-trái. Kéo dài ngang màn hình dùng (1,-1) và (-1,1); dọc màn hình dùng (1,1) và (-1,-1).")]
+        private Vector2Int[] _extraCells = System.Array.Empty<Vector2Int>();
+
         [Header("Trực quan")]
         [SerializeField] private Sprite _icon;
         [SerializeField] private GameObject _prefab;
@@ -60,6 +69,11 @@ namespace DreamCafe.DataControl
         public float MoneyPerSecondBonus => _moneyPerSecondBonus;
         public Sprite Icon => _icon;
         public GameObject Prefab => _prefab;
+        /// <summary>Số ô gạch món này chiếm trên sàn. Luôn tối thiểu 1x1.</summary>
+        public Vector2Int GridFootprint => new(Mathf.Max(1, _gridFootprint.x), Mathf.Max(1, _gridFootprint.y));
+
+        /// <summary>Các ô chiếm thêm ngoài khối chữ nhật, lệch so với ô gốc.</summary>
+        public Vector2Int[] ExtraCells => _extraCells ?? System.Array.Empty<Vector2Int>();
         public Vector2 DefaultSpawnOffset => _defaultSpawnOffset;
         public Sprite RightWallSprite => _rightWallSprite;
     }

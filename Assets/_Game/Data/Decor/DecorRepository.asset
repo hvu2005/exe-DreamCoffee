@@ -27,3 +27,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 499d3f14cf362b04cbd26a94f5a55e0b, type: 2}
   - {fileID: 11400000, guid: e0fdb22f59aafc34080e44574eb3a163, type: 2}
   - {fileID: 11400000, guid: 42d4c3fb9ef637e46b43ee47e27f2bac, type: 2}
+  _defaultPlacements:
+  - slotId: slot_counter_main
+    item: {fileID: 11400000, guid: 3812a66e5378f964ca823f31997645a7, type: 2}
+  - slotId: slot_table_04
+    item: {fileID: 11400000, guid: f995cb78e64439146a5f133b3d1d1b84, type: 2}
+  - slotId: slot_table_05
+    item: {fileID: 11400000, guid: f995cb78e64439146a5f133b3d1d1b84, type: 2}

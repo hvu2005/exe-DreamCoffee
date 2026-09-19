@@ -73,6 +73,8 @@ namespace DreamCafe.SystemControl.Decor
         public ExpansionZoneId RequiredZone => _requiredZone;
         public DecorItem CurrentDecorItem => _currentDecorItem;
         public int TotalSeats => _seatAnchors.Length;
+        /// <summary>Các điểm neo ghế — dùng để quy ghế về ô lưới và cho AI tìm chỗ ngồi.</summary>
+        public IReadOnlyList<Transform> SeatAnchors => _seatAnchors;
         public GameObject EmptyIndicator { get => _emptyIndicator; set => _emptyIndicator = value; }
         public Transform MountPoint => _mountPoint != null ? _mountPoint : transform;
         public GameObject SpawnedInstance => _spawnedInstance;
@@ -338,11 +340,22 @@ namespace DreamCafe.SystemControl.Decor
         }
 
         /// <summary>
-        /// Tự động áp dụng lớp hiển thị (Sorting Layer) để chậu hoa / đồ trang trí lên trước bàn ghế.
+        /// Áp lớp hiển thị cho món vừa dựng. Mặc định dùng quy tắc 2.5D chung
+        /// (<see cref="Rendering.IsoDepthSorter"/>): mảnh nào chân thấp hơn thì vẽ đè lên trên, nhờ
+        /// vậy khách đi ngang bàn sẽ chìm/nổi đúng chỗ. Slot nào bật <see cref="_overrideSorting"/>
+        /// thì vẫn theo số gán tay như cũ.
         /// </summary>
         public void ApplySortingToInstance(GameObject instance)
         {
             if (instance == null) return;
+
+            if (!_overrideSorting && _allowedCategory != DecorCategory.OutdoorPlanter)
+            {
+                var sorter = instance.GetComponent<Rendering.IsoDepthSorter>();
+                if (sorter == null) sorter = instance.AddComponent<Rendering.IsoDepthSorter>();
+                sorter.Configure(Rendering.IsoDepthMode.PerRenderer, continuous: false);
+                return;
+            }
 
             // Nếu là chậu hoa OutdoorPlanter hoặc được đánh dấu ghi đè sorting
             if (_allowedCategory == DecorCategory.OutdoorPlanter || _overrideSorting)
@@ -453,6 +466,19 @@ namespace DreamCafe.SystemControl.Decor
             {
                 _seatOccupiedFlags[seatIndex] = occupied;
             }
+        }
+
+        /// <summary>
+        /// Bàn này đã có ít nhất một người ngồi chưa. Dùng để ưu tiên xếp khách vào bàn còn trống
+        /// hẳn thay vì nhét chung bàn với người lạ.
+        /// </summary>
+        public bool HasOccupiedSeat()
+        {
+            for (int i = 0; i < _seatOccupiedFlags.Length; i++)
+            {
+                if (_seatOccupiedFlags[i]) return true;
+            }
+            return false;
         }
 
         /// <summary>

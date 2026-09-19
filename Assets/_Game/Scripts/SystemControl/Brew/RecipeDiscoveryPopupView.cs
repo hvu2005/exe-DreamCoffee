@@ -104,7 +104,7 @@ namespace DreamCafe.SystemControl.Brew
 
             BuildIngredientChips(recipe, items);
 
-            if (revenueLabel != null) revenueLabel.text = $"{recipe.BasePrice:N0}";
+            if (revenueLabel != null) revenueLabel.text = RecipeStatFormat.MoneyPerSecond(recipe);
             if (prepTimeLabel != null) prepTimeLabel.text = $"{recipe.CraftTimeSeconds:0.#} sec";
             if (levelLabel != null) levelLabel.text = initialLevelText;
 

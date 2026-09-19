@@ -91,14 +91,36 @@ namespace DreamCafe.DataControl
                 RegisterZone(zone);
             }
 
-            // Mặc định quầy bar chính luôn được trang bị sẵn (quầy phục vụ cốt lõi của quán)
-            if (_items.ContainsKey("item_counter_emerald") && !_slotAssignments.ContainsKey("slot_counter_main"))
-            {
-                _slotAssignments["slot_counter_main"] = "item_counter_emerald";
-            }
+            // Những gì quán đã có sẵn lúc mới mở: quầy bar, bàn ghế khởi đầu... — đọc từ Inspector
+            // của DecorRepository, muốn đổi thì sửa data chứ không phải sửa code.
+            ApplyDefaultPlacements(repository.GetDefaultPlacements());
 
             RecalculateBuffs();
             Changed?.Invoke();
+        }
+
+        /// <summary>
+        /// Đặt sẵn nội thất vào slot theo cấu hình của repository. Món đặt sẵn được mở khóa luôn
+        /// (người chơi không phải mua), còn slot nào đã có đồ rồi thì giữ nguyên, không ghi đè.
+        /// </summary>
+        private void ApplyDefaultPlacements(DecorDefaultPlacement[] placements)
+        {
+            if (placements == null) return;
+
+            foreach (var placement in placements)
+            {
+                if (placement == null || placement.item == null) continue;
+                if (string.IsNullOrEmpty(placement.slotId) || _slotAssignments.ContainsKey(placement.slotId)) continue;
+
+                string itemId = placement.item.Id;
+                if (string.IsNullOrEmpty(itemId)) continue;
+
+                // Món đặt sẵn có thể chưa nằm trong danh mục _items nếu quên khai báo ở repository
+                if (!_items.ContainsKey(itemId)) _items[itemId] = placement.item;
+
+                _unlockedItemIds.Add(itemId);
+                _slotAssignments[placement.slotId] = itemId;
+            }
         }
 
         // =====================================================================

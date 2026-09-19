@@ -22,4 +22,5 @@ MonoBehaviour:
   - special
   _craftTimeSeconds: 4
   _basePrice: 50000
+  _moneyPerSecondBonus: 1
   _isDefaultUnlocked: 0

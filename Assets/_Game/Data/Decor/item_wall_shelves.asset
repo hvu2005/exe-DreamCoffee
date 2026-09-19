@@ -27,6 +27,8 @@ MonoBehaviour:
   _tipChanceBonus: 0.05
   _seatingCapacity: 0
   _moneyPerSecondBonus: 5
+  _gridFootprint: {x: 1, y: 1}
+  _extraCells: []
   _icon: {fileID: 21300000, guid: 60e6762dd9152d1429ac126b59e84f2f, type: 3}
   _prefab: {fileID: 8894633789332676842, guid: 1cd9d0ec991685045a13dd375124961a, type: 3}
   _defaultSpawnOffset: {x: 0, y: 0}

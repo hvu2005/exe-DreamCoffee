@@ -309,7 +309,7 @@ namespace DreamCafe.SystemControl.Brew
                     break;
 
                 case BrewOutcome.Success:
-                    SetResult($"Served: {result.Recipe.DisplayName} (+{result.Recipe.BasePrice:N0}d)", Good);
+                    SetResult($"Served: {result.Recipe.DisplayName} (+{RecipeStatFormat.MoneyPerSecond(result.Recipe)})", Good);
                     break;
 
                 case BrewOutcome.NoMatch:

@@ -54,6 +54,16 @@ namespace DreamCafe.DataControl
             AutoBindTopBar();
         }
 
+        /// <summary>
+        /// Nhịp đập của hệ thống tiền tệ: mỗi frame đẩy deltaTime vào CurrencyController,
+        /// controller tự gom lại và cứ 1 giây mới cộng MPS vào số dư + ghi xuống DB.
+        /// Đặt ở đây (thay vì trên TopBarCurrencyView) để tiền vẫn chạy khi thanh top bar bị ẩn.
+        /// </summary>
+        private void Update()
+        {
+            _currencyController?.Tick(Time.deltaTime);
+        }
+
         private void InitializeControllers()
         {
             _customerController = new CustomerController();
@@ -118,6 +128,31 @@ namespace DreamCafe.DataControl
             {
                 _currencyController.RegisterFromRepository(currencyRepo);
             }
+
+            // MPS được dựng lại mỗi lần khởi động: base trong CurrencyRepository + bonus của các công
+            // thức đang mở khoá. Phải chạy SAU RegisterFromRepository vì hàm đó kéo MPS về đúng base.
+            ApplyRecipeMpsBonuses();
+        }
+
+        /// <summary>
+        /// Cộng dồn tiền/giây của toàn bộ công thức đang mở khoá vào MPS của quán.
+        /// Nhờ vậy mở khoá món mới là quán kiếm thêm tiền thụ động vĩnh viễn, và số đó không mất
+        /// sau khi tắt game — nó được tính lại từ danh sách công thức đã lưu chứ không lưu riêng.
+        /// </summary>
+        private void ApplyRecipeMpsBonuses()
+        {
+            if (_recipeController == null || _currencyController == null) return;
+
+            float total = 0f;
+            foreach (var recipe in _recipeController.GetUnlocked())
+            {
+                if (recipe != null) total += recipe.MoneyPerSecondBonus;
+            }
+
+            if (total <= 0f) return;
+
+            _currencyController.AddMoneyPerSecond(total);
+            Debug.Log($"[GameSystemsProvider] Cộng {total:N0}đ/s vào MPS từ {_recipeController.UnlockedCount} công thức đã mở khoá.");
         }
 
         private void AutoBindTopBar()
@@ -152,6 +187,13 @@ namespace DreamCafe.DataControl
 
             var unlockedRecipeIds = new HashSet<string>(_recipeController.GetUnlocked().Select(r => r.Id));
             _customerController.CheckAutoUnlock(unlockedRecipeIds);
+
+            // Mò ra món mới là MPS của quán tăng theo luôn. Lúc đang khôi phục save thì bỏ qua, vì
+            // ApplyRecipeMpsBonuses() cuối LoadDefinitionsFromDatabase đã cộng gộp một lần rồi.
+            if (!_restoringUnlocks && _currencyController != null && recipe != null)
+            {
+                _currencyController.AddMoneyPerSecond(recipe.MoneyPerSecondBonus);
+            }
 
             // Mò ra món mới là ghi ngay, không chờ tới lúc thoát game — tắt ngang vẫn không mất tiến độ.
             if (!_restoringUnlocks) RecipeUnlockStore.Save(_recipeController);

@@ -21,5 +21,8 @@ namespace DreamCafe.DataControl
 
         /// <summary>Lấy danh sách toàn bộ các khu vực mở rộng.</summary>
         ExpansionZoneData[] GetAllZones();
+
+        /// <summary>Lấy danh sách nội thất được đặt sẵn vào slot ngay từ đầu ván chơi.</summary>
+        DecorDefaultPlacement[] GetDefaultPlacements();
     }
 }

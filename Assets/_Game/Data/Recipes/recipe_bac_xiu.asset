@@ -23,4 +23,5 @@ MonoBehaviour:
   - gelato_vanilla
   _craftTimeSeconds: 3.5
   _basePrice: 30000
+  _moneyPerSecondBonus: 150000
   _isDefaultUnlocked: 1

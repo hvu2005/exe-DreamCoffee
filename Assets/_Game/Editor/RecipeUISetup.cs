@@ -66,7 +66,7 @@ namespace DreamCafe.EditorTools
             var statusLabel = AddText(NewUI("Label", tag.transform), "KNOWN", 11, Color.white, TextAlignmentOptions.Center);
             Stretch(statusLabel.rectTransform);
 
-            var priceLabel = AddText(NewUI("PriceLabel", root.transform), "0 VND", 12, MutedBrown, TextAlignmentOptions.MidlineRight);
+            var priceLabel = AddText(NewUI("PriceLabel", root.transform), "0 d/s", 12, MutedBrown, TextAlignmentOptions.MidlineRight);
             SetRect(priceLabel.gameObject, TopRight, TopRight, TopRight, new Vector2(-10f, -10f), new Vector2(120f, 20f));
 
             var iconGo = NewUI("Icon", root.transform);
@@ -203,6 +203,11 @@ namespace DreamCafe.EditorTools
             so.FindProperty("database").objectReferenceValue =
                 Object.FindFirstObjectByType<Core.Database.DatabaseManager>(FindObjectsInactive.Include);
             so.ApplyModifiedPropertiesWithoutUndo();
+
+            // Tắt Window ngay lúc dựng để panel không che Scene view — sửa mấy thứ khác trong
+            // scene mới thao tác được. Tắt đúng Window chứ KHÔNG tắt node gốc: gốc tắt thì
+            // Update() không chạy, bấm phím tắt cũng không mở lại được panel.
+            window.SetActive(false);
 
             return panel;
         }

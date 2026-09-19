@@ -10,7 +10,8 @@ namespace DreamCafe.Gameplay.Customer.States
 
         public void Enter(CustomerController ctx)
         {
-            ctx.Agent.isStopped = true;
+            ctx.StopMoving();
+            ctx.ApplySeatedSorting();
             _elapsed = 0f;
             ctx.View?.Render(new CustomerViewModel(showTimer: true, timerProgress01: 1f));
         }
@@ -30,8 +31,8 @@ namespace DreamCafe.Gameplay.Customer.States
 
         public void Exit(CustomerController ctx)
         {
+            ctx.ClearSeatedSorting();
             ctx.View?.Render(new CustomerViewModel(showTimer: false, timerProgress01: 0f));
-            ctx.Agent.isStopped = false;
         }
     }
 }

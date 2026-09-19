@@ -46,7 +46,7 @@ namespace DreamCafe.SystemControl.UI
                 ? Color.clear
                 : (unlocked ? Color.white : new Color(0.15f, 0.15f, 0.15f, 0.55f));
 
-            priceLabel.text = unlocked ? $"{recipe.BasePrice:N0} VND" : "-";
+            priceLabel.text = unlocked ? RecipeStatFormat.MoneyPerSecond(recipe) : "-";
 
             if (!unlocked)
             {

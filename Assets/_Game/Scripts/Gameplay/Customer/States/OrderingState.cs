@@ -12,7 +12,7 @@ namespace DreamCafe.Gameplay.Customer.States
 
         public void Enter(CustomerController ctx)
         {
-            ctx.Agent.isStopped = true;
+            ctx.StopMoving();
             _elapsed = 0f;
             ctx.ShowOrderTicket(ctx.Order);
         }
@@ -30,7 +30,6 @@ namespace DreamCafe.Gameplay.Customer.States
         {
             ctx.HideOrderTicket();
             ctx.AssignedCounter?.SetStandOccupied(ctx.CounterStandIndex, false);
-            ctx.Agent.isStopped = false;
         }
     }
 }

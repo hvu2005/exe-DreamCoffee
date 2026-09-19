@@ -38,6 +38,9 @@ namespace DreamCafe.DataControl
         [SerializeField, Min(0), Tooltip("Giá bán gốc thu về khi phục vụ món này (VNĐ).")]
         private int _basePrice = 25000;
 
+        [SerializeField, Min(0f), Tooltip("Tiền/giây cộng thêm vĩnh viễn vào MPS của quán khi công thức này được mở khóa (VNĐ/s).")]
+        private float _moneyPerSecondBonus = 0f;
+
         [SerializeField, Tooltip("Công thức này có được mở khóa mặc định từ đầu game không (hay phải mò)?")]
         private bool _isDefaultUnlocked = true;
 
@@ -71,6 +74,9 @@ namespace DreamCafe.DataControl
 
         /// <summary>Giá bán cơ bản.</summary>
         public int BasePrice => _basePrice;
+
+        /// <summary>Tiền/giây cộng thêm vào MPS của quán khi công thức này đã mở khóa (VNĐ/s).</summary>
+        public float MoneyPerSecondBonus => _moneyPerSecondBonus;
 
         /// <summary>Có được mở khóa sẵn từ đầu game hay không.</summary>
         public bool IsDefaultUnlocked => _isDefaultUnlocked;

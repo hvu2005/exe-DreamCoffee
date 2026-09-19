@@ -41,15 +41,16 @@ namespace DreamCafe.EditorTools
         private static readonly Color Gold = new(0.957f, 0.749f, 0.212f);
         private static readonly Color RewardGreen = new(0.353f, 0.588f, 0.176f);
 
-        // Khung nền panel là ảnh 1920x1068 -> giữ đúng tỉ lệ để không méo hoạ tiết.
-        private static readonly Vector2 DialogSize = new(1100f, 612f);
-        // Khay gỗ 295x233.
-        private static readonly Vector2 CellSize = new(112f, 88f);
+        // Khung nền panel là ảnh 1861x921 (tỉ lệ 2.021) -> khung phải cùng tỉ lệ, không thì hoạ tiết
+        // bị kéo méo. 1820x900 = 2.022, và rộng ~95% màn hình 1920 đúng như bản thiết kế.
+        private static readonly Vector2 DialogSize = new(1820f, 900f);
+        // Khay gỗ 295x233 (tỉ lệ 1.266) -> ô giữ đúng tỉ lệ đó để khung gỗ không bị bóp.
+        private static readonly Vector2 CellSize = new(168f, 132f);
         // Tấm thẻ của bảng công thức mới — nút ADD TO MENU thò ra khỏi mép dưới nên chừa chỗ sẵn.
         private static readonly Vector2 CardSize = new(940f, 560f);
         // Ca pha chế: đúng tỉ lệ 600x520 của bộ ảnh do PitcherArtGenerator vẽ ra.
-        private static readonly Vector2 CupSize = new(340f, 295f);
-        private static readonly Vector2 CupPosition = new(365f, -140f);
+        private static readonly Vector2 CupSize = new(467f, 405f);
+        private static readonly Vector2 CupPosition = new(694f, -364f);
 
         // Tấm panel trượt vào lúc đang pha.
         private static readonly Vector2 LoadingPanelSize = new(560f, 360f);
@@ -90,16 +91,27 @@ namespace DreamCafe.EditorTools
             var frame = AddSprite(root, $"{ArtDir}/tray.png", Color.white);
             frame.raycastTarget = true;
 
-            // Icon hơi lệch lên trên vì khay có gờ đỡ ở cạnh dưới.
+            // Icon căng theo ô thay vì cố định một cỡ: đổi CellSize là món tự to/nhỏ theo, không
+            // còn cảnh khay gỗ phình ra mà món bên trong vẫn bé tí. Chừa lề dưới cho gờ đỡ của khay.
             var iconGo = NewUI("Icon", root.transform);
-            SetRect(iconGo, Center, Center, Center, new Vector2(0f, 8f), new Vector2(58f, 58f));
+            var iconRect = (RectTransform)iconGo.transform;
+            iconRect.anchorMin = Vector2.zero;
+            iconRect.anchorMax = Vector2.one;
+            iconRect.offsetMin = new Vector2(24f, 30f);
+            iconRect.offsetMax = new Vector2(-24f, -14f);
             var icon = iconGo.AddComponent<Image>();
             icon.preserveAspect = true;
             icon.raycastTarget = false;
 
-            var quantityLabel = AddText(NewUI("QuantityLabel", root.transform), "x0", 15, Color.white,
+            // Số lượng nằm giữa gờ khay (thiết kế để ở giữa, không phải nhét góc trái).
+            var quantityLabel = AddText(NewUI("QuantityLabel", root.transform), "x0", 22, Color.white,
                 TextAlignmentOptions.Center);
-            SetRect(quantityLabel.gameObject, BottomLeft, BottomLeft, BottomLeft, new Vector2(8f, 4f), new Vector2(54f, 22f));
+            var qtyRect = quantityLabel.rectTransform;
+            qtyRect.anchorMin = new Vector2(0f, 0f);
+            qtyRect.anchorMax = new Vector2(1f, 0f);
+            qtyRect.pivot = new Vector2(0.5f, 0f);
+            qtyRect.anchoredPosition = new Vector2(0f, 5f);
+            qtyRect.sizeDelta = new Vector2(-40f, 30f);
             quantityLabel.fontStyle = FontStyles.Bold;
             Outline(quantityLabel, DarkBrown, 0.25f);
 
@@ -146,16 +158,16 @@ namespace DreamCafe.EditorTools
             var mixtureSlots = BuildMixtureStrip(dialog.transform);
 
             var brewButton = BuildButton(dialog.transform, "BrewButton", "BREW",
-                BottomCenter, new Vector2(0f, 26f), new Vector2(300f, 79f), 27f);
+                BottomCenter, new Vector2(0f, 40f), new Vector2(438f, 109f), 37f);
 
             // Nút đóng (X) tròn góc trên phải, tràn ra ngoài mép panel như trong mock.
             var closeGo = NewUI("CloseButton", dialog.transform);
-            SetRect(closeGo, TopRight, TopRight, TopRight, new Vector2(6f, 14f), new Vector2(64f, 64f));
+            SetRect(closeGo, TopRight, TopRight, TopRight, new Vector2(9f, 92f), new Vector2(108f, 108f));
             var closeImage = AddSprite(closeGo, $"{SpritesDir}/circle.png", Red);
             closeImage.raycastTarget = true;
             var closeButton = closeGo.AddComponent<Button>();
             closeButton.targetGraphic = closeImage;
-            var closeLabel = AddText(NewUI("Label", closeGo.transform), "X", 30, Color.white, TextAlignmentOptions.Center);
+            var closeLabel = AddText(NewUI("Label", closeGo.transform), "X", 46, Color.white, TextAlignmentOptions.Center);
             Stretch(closeLabel.rectTransform);
             closeLabel.fontStyle = FontStyles.Bold;
 
@@ -199,6 +211,11 @@ namespace DreamCafe.EditorTools
                 Object.FindFirstObjectByType<Core.Database.DatabaseManager>(FindObjectsInactive.Include);
             so.ApplyModifiedPropertiesWithoutUndo();
 
+            // Tắt Window ngay lúc dựng để panel không che Scene view — sửa mấy thứ khác trong
+            // scene mới thao tác được. Tắt đúng Window chứ KHÔNG tắt node gốc: gốc tắt thì
+            // Update() không chạy, bấm phím tắt cũng không mở lại được panel.
+            window.SetActive(false);
+
             return panel;
         }
 
@@ -206,8 +223,8 @@ namespace DreamCafe.EditorTools
         private static GameObject BuildShelf(Transform dialog)
         {
             var scrollGo = NewUI("IngredientShelf", dialog);
-            // Rộng và cao hơn trước: thanh nước cạnh bên và nút ADD WATER phía dưới đã bỏ đi.
-            SetRect(scrollGo, TopLeft, TopLeft, TopLeft, new Vector2(36f, -44f), new Vector2(292f, 512f));
+            // Cột trái chiếm ~20% bề ngang và ~70% bề cao panel, đúng tỉ lệ lưới 2x3 trong thiết kế.
+            SetRect(scrollGo, TopLeft, TopLeft, TopLeft, new Vector2(64f, -57f), new Vector2(368f, 632f));
             var scroll = scrollGo.AddComponent<ScrollRect>();
             scroll.horizontal = false;
             scroll.scrollSensitivity = 25f;
@@ -228,8 +245,8 @@ namespace DreamCafe.EditorTools
 
             var grid = content.AddComponent<GridLayoutGroup>();
             grid.cellSize = CellSize;
-            grid.spacing = new Vector2(12f, 12f);
-            grid.padding = new RectOffset(6, 6, 6, 6);
+            grid.spacing = new Vector2(16f, 20f);
+            grid.padding = new RectOffset(8, 8, 8, 8);
             grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             grid.constraintCount = 2;
 
@@ -301,29 +318,30 @@ namespace DreamCafe.EditorTools
         private static (TMP_Text hint, TMP_Text result) BuildHintBoard(Transform dialog)
         {
             var board = NewUI("HintBoard", dialog);
-            SetRect(board, TopLeft, TopLeft, TopLeft, new Vector2(742f, -60f), new Vector2(326f, 221f));
+            // Ảnh bảng đen là 594x401 (tỉ lệ 1.481) -> 590x399 giữ nguyên tỉ lệ, không méo viền gỗ.
+            SetRect(board, TopLeft, TopLeft, TopLeft, new Vector2(1192f, -107f), new Vector2(590f, 399f));
             AddSprite(board, $"{ArtDir}/image 82.png", Color.white, fallback: new Color(0.129f, 0.137f, 0.129f));
 
-            var title = AddText(NewUI("Title", board.transform), "Hint:", 23, Color.white, TextAlignmentOptions.Center);
-            SetRect(title.gameObject, TopLeft, TopRight, new Vector2(0.5f, 1f), new Vector2(0f, -30f), new Vector2(0f, 30f));
+            var title = AddText(NewUI("Title", board.transform), "Hint:", 42, Color.white, TextAlignmentOptions.Center);
+            SetRect(title.gameObject, TopLeft, TopRight, new Vector2(0.5f, 1f), new Vector2(0f, -54f), new Vector2(0f, 54f));
             title.fontStyle = FontStyles.Bold;
 
-            var hint = AddText(NewUI("HintLabel", board.transform), "...", 16,
+            var hint = AddText(NewUI("HintLabel", board.transform), "...", 29,
                 new Color(1f, 1f, 1f, 0.92f), TextAlignmentOptions.TopLeft);
             var hintRect = hint.rectTransform;
             hintRect.anchorMin = Vector2.zero;
             hintRect.anchorMax = Vector2.one;
-            hintRect.offsetMin = new Vector2(34f, 62f);
-            hintRect.offsetMax = new Vector2(-34f, -68f);
+            hintRect.offsetMin = new Vector2(62f, 112f);
+            hintRect.offsetMax = new Vector2(-62f, -123f);
 
-            var result = AddText(NewUI("ResultLabel", board.transform), string.Empty, 15,
+            var result = AddText(NewUI("ResultLabel", board.transform), string.Empty, 27,
                 Color.white, TextAlignmentOptions.Top);
             var resultRect = result.rectTransform;
             resultRect.anchorMin = new Vector2(0f, 0f);
             resultRect.anchorMax = new Vector2(1f, 0f);
             resultRect.pivot = new Vector2(0.5f, 0f);
-            resultRect.anchoredPosition = new Vector2(0f, 22f);
-            resultRect.sizeDelta = new Vector2(-60f, 46f);
+            resultRect.anchoredPosition = new Vector2(0f, 40f);
+            resultRect.sizeDelta = new Vector2(-108f, 83f);
             result.fontStyle = FontStyles.Bold;
 
             return (hint, result);
@@ -333,21 +351,26 @@ namespace DreamCafe.EditorTools
         private static BrewMixtureSlotView[] BuildMixtureStrip(Transform dialog)
         {
             var strip = NewUI("MixtureStrip", dialog);
-            SetRect(strip, TopLeft, TopLeft, TopLeft, new Vector2(736f, -300f), new Vector2(338f, 150f));
+            SetRect(strip, TopLeft, TopLeft, TopLeft, new Vector2(1219f, -566f), new Vector2(540f, 182f));
 
             var layout = strip.AddComponent<HorizontalLayoutGroup>();
             layout.childAlignment = TextAnchor.MiddleCenter;
             layout.childForceExpandWidth = false;
             layout.childForceExpandHeight = false;
-            layout.spacing = 2f;
+            // Bắt buộc bật: tắt thì layout bỏ qua LayoutElement và xếp con theo kích thước rect thô
+            // của chúng (chữ "+" mặc định 200x50), tổng bề ngang vọt lên ~708px và dải chữ tràn hẳn
+            // ra ngoài mép phải panel.
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.spacing = 6f;
 
             var slots = new BrewMixtureSlotView[BrewingController.MaxIngredients];
             for (int i = 0; i < slots.Length; i++)
             {
                 if (i > 0)
                 {
-                    var plus = AddText(NewUI("Plus", strip.transform), "+", 32, Brown, TextAlignmentOptions.Center);
-                    AddLayoutElement(plus.gameObject, 26f, 120f);
+                    var plus = AddText(NewUI("Plus", strip.transform), "+", 48, Brown, TextAlignmentOptions.Center);
+                    AddLayoutElement(plus.gameObject, 40f, 100f);
                     plus.fontStyle = FontStyles.Bold;
                 }
 
@@ -360,19 +383,19 @@ namespace DreamCafe.EditorTools
         private static BrewMixtureSlotView BuildMixtureSlot(Transform parent, int index)
         {
             var root = NewUI($"MixtureSlot{index}", parent);
-            AddLayoutElement(root, 90f, 132f);
+            AddLayoutElement(root, 142f, 165f);
             var bg = AddImage(root, new Color(1f, 1f, 1f, 0f));
             bg.raycastTarget = true;
 
             var iconGo = NewUI("Icon", root.transform);
             SetRect(iconGo, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f),
-                new Vector2(0f, -8f), new Vector2(76f, 86f));
+                new Vector2(0f, -12f), new Vector2(120f, 136f));
             var icon = iconGo.AddComponent<Image>();
             icon.preserveAspect = true;
             icon.raycastTarget = false;
 
-            var nameLabel = AddText(NewUI("NameLabel", root.transform), "???", 13, DarkBrown, TextAlignmentOptions.Top);
-            SetRect(nameLabel.gameObject, BottomCenter, BottomCenter, BottomCenter, new Vector2(0f, 4f), new Vector2(92f, 34f));
+            var nameLabel = AddText(NewUI("NameLabel", root.transform), "???", 20, DarkBrown, TextAlignmentOptions.Top);
+            SetRect(nameLabel.gameObject, BottomCenter, BottomCenter, BottomCenter, new Vector2(0f, 6f), new Vector2(145f, 54f));
 
             var button = root.AddComponent<Button>();
             button.targetGraphic = bg;
@@ -900,7 +923,7 @@ namespace DreamCafe.EditorTools
             AddImage(stats, CardCream);
             BuildSectionHeader(stats.transform, "OPERATION STATS");
 
-            var revenue = BuildStatRow(stats.transform, 34f, Gold, "Base Revenue", "0", DarkBrown, out _);
+            var revenue = BuildStatRow(stats.transform, 34f, Gold, "Money Per Sec", "0 d/s", DarkBrown, out _);
             var prepTime = BuildStatRow(stats.transform, -18f, Brown, "Prep Time", "0 sec", DarkBrown, out _);
             var level = BuildStatRow(stats.transform, -70f, Gold, "Initial Level", "Lv.1", DarkBrown, out _);
 

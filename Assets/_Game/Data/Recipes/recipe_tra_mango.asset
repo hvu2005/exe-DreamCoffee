@@ -22,4 +22,5 @@ MonoBehaviour:
   - mango
   _craftTimeSeconds: 3.5
   _basePrice: 35000
+  _moneyPerSecondBonus: 1
   _isDefaultUnlocked: 0

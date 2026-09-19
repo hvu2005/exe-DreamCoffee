@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.8333333, y: 0.8333333, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5360826209322761718}
@@ -116,7 +116,7 @@ Transform:
   m_GameObject: {fileID: 5483509583471538100}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.344, y: 0.29, z: 0}
+  m_LocalPosition: {x: 0.5, y: 0.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -147,7 +147,7 @@ Transform:
   m_GameObject: {fileID: 6109439870914028963}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.323, y: -0.294, z: 0}
+  m_LocalPosition: {x: -0.5, y: 0.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -211,6 +211,11 @@ MonoBehaviour:
   - {fileID: 196051425106233294}
   _promptBubble: {fileID: 0}
   _emptyIndicator: {fileID: 4642235141303794130}
+  _wallPerspective: 0
+  _overrideSorting: 0
+  _customSortingLayer: Default
+  _customSortingOrder: 18
+  _itemOffsets: []
 --- !u!61 &8343439572401766231
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -6,8 +6,8 @@ using DreamCafe.Gameplay.Customer.States;
 using DreamCafe.Gameplay.Order;
 using DreamCafe.SystemControl.Customer;
 using DreamCafe.SystemControl.Decor;
+using DreamCafe.SystemControl.Navigation;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace DreamCafe.Gameplay.Customer
 {
@@ -16,11 +16,11 @@ namespace DreamCafe.Gameplay.Customer
     /// đếm ngược rồi rời quán. Bản thân controller chỉ giữ tham chiếu và chuyển tiếp Tick tới
     /// <see cref="ICustomerState"/> đang active — toàn bộ hành vi nằm trong các state.
     /// </summary>
-    [RequireComponent(typeof(NavMeshAgent))]
+    [RequireComponent(typeof(GridPathFollower))]
     public sealed class CustomerController : ControllerBase
     {
         [Header("Tham chiếu")]
-        [SerializeField] private NavMeshAgent _agent;
+        [SerializeField] private GridPathFollower _mover;
         [SerializeField] private CustomerView _view;
         [SerializeField, Tooltip("Điểm neo để bong bóng order xuất hiện phía trên đầu")]
         private Transform _ticketAnchor;
@@ -28,7 +28,7 @@ namespace DreamCafe.Gameplay.Customer
         private ICustomerState _state;
         private OrderTicketController _ticket;
 
-        public NavMeshAgent Agent => _agent;
+        public GridPathFollower Mover => _mover;
         public CustomerView View => _view;
 
         public CustomerItem Definition { get; private set; }
@@ -38,9 +38,15 @@ namespace DreamCafe.Gameplay.Customer
         public int CounterStandIndex { get; private set; }
         public Vector3 CounterStandPosition { get; private set; }
 
-        public DecorSlot AssignedSeat { get; private set; }
+        public GridOccupant AssignedSeat { get; private set; }
         public int SeatIndex { get; private set; }
         public Vector3 SeatPosition { get; private set; }
+
+        /// <summary>
+        /// Xin chỗ ngồi khác khi chỗ đang giữ hỏng (bàn bị dỡ, hoặc bít đường không tới nổi).
+        /// CustomerSceneManager cắm hàm này vào lúc spawn; trả về false nghĩa là quán hết chỗ.
+        /// </summary>
+        public System.Func<CustomerController, bool> SeatReassignRequest { get; set; }
 
         public Vector3 ExitPosition { get; private set; }
 
@@ -48,18 +54,31 @@ namespace DreamCafe.Gameplay.Customer
 
         private void Reset()
         {
-            _agent = GetComponent<NavMeshAgent>();
+            _mover = GetComponent<GridPathFollower>();
+        }
+
+        /// <summary>
+        /// Nhận ServiceContext và tiêm dịch vụ tìm đường xuống bộ phận di chuyển — khách không tự
+        /// đi tìm singleton, mọi phụ thuộc đi qua context như các controller khác trong dự án.
+        /// </summary>
+        public override void Bind(Core.Services.ServiceContext ctx)
+        {
+            base.Bind(ctx);
+
+            if (_mover == null) _mover = GetComponent<GridPathFollower>();
+            if (ctx?.Services != null && ctx.Services.TryResolve<IPathfindingService>(out var pathfinding))
+            {
+                _mover.SetPathfinding(pathfinding);
+            }
         }
 
         /// <summary>Nạp toàn bộ dữ liệu spawn và bắt đầu FSM. Gọi ngay sau <see cref="Bind"/>.</summary>
         public void Configure(CustomerSpawnContext spawnCtx)
         {
-            // Mesh NavMesh được bake nghiêng -90° quanh X để nằm phẳng trên mặt phẳng XY (xem
-            // NavMeshFloor trong scene) — NavMeshAgent sẽ tự xoay Transform theo pháp tuyến bề mặt đó
-            // nếu để mặc định. Tắt updatePosition/updateRotation và tự đồng bộ ở Update() để sprite
-            // luôn đứng thẳng, đúng mặt phẳng Z=0.
-            _agent.updateRotation = false;
-            _agent.updatePosition = false;
+            if (_mover == null) _mover = GetComponent<GridPathFollower>();
+            // Lấy từ pool ra là xoá sạch đường đi của lượt trước, nếu không khách mới sinh ra sẽ
+            // tiếp tục lết theo lộ trình của khách cũ.
+            _mover.Teleport(transform.position);
 
             Definition = spawnCtx.Definition;
             Order = spawnCtx.Order;
@@ -70,10 +89,11 @@ namespace DreamCafe.Gameplay.Customer
 
             AssignedSeat = spawnCtx.Seat;
             SeatIndex = spawnCtx.SeatIndex;
-            SeatPosition = spawnCtx.SeatPoint.position;
+            SeatPosition = spawnCtx.SeatPoint;
 
             ExitPosition = spawnCtx.ExitPoint.position;
             _onFinished = spawnCtx.OnFinished;
+            SeatReassignRequest = spawnCtx.SeatReassignRequest;
 
             ChangeState(new MovingToCounterState());
         }
@@ -81,9 +101,47 @@ namespace DreamCafe.Gameplay.Customer
         private void Update()
         {
             _state?.Tick(this, Time.deltaTime);
+        }
 
-            Vector3 next = _agent.nextPosition;
-            transform.SetPositionAndRotation(new Vector3(next.x, next.y, 0f), Quaternion.identity);
+        // =====================================================================
+        // DI CHUYỂN (các state gọi qua đây, không đụng thẳng vào bộ tìm đường)
+        // =====================================================================
+
+        /// <summary>Đi tới một điểm. Trả về false nếu không có đường — nơi gọi tự xử.</summary>
+        public bool MoveTo(Vector3 worldTarget) => _mover.SetDestination(worldTarget);
+
+        /// <summary>Đứng lại tại chỗ.</summary>
+        public void StopMoving() => _mover.Stop();
+
+        /// <summary>Đã tới đích của lần <see cref="MoveTo"/> gần nhất chưa.</summary>
+        public bool HasArrived => _mover.HasArrived;
+
+        /// <summary>
+        /// Ép lớp vẽ của khách theo chỗ ngồi: trên cái ghế, dưới mặt bàn. Gọi lúc ngồi xuống.
+        /// </summary>
+        public void ApplySeatedSorting()
+        {
+            if (AssignedSeat == null || SeatIndex < 0) return;
+
+            var sorter = GetComponent<SystemControl.Rendering.IsoDepthSorter>();
+            if (sorter != null) sorter.SetOrderOverride(AssignedSeat.SeatedSortingOrder(SeatIndex));
+        }
+
+        /// <summary>Bỏ ép lớp vẽ, quay lại xếp theo độ sâu (lúc đứng dậy đi).</summary>
+        public void ClearSeatedSorting()
+        {
+            var sorter = GetComponent<SystemControl.Rendering.IsoDepthSorter>();
+            if (sorter != null) sorter.ClearOrderOverride();
+        }
+
+        /// <summary>
+        /// Nhận chỗ ngồi mới do CustomerSceneManager giao — dùng khi phải đổi bàn giữa chừng.
+        /// </summary>
+        public void AssignSeat(GridOccupant seat, int seatIndex, Vector3 seatPosition)
+        {
+            AssignedSeat = seat;
+            SeatIndex = seatIndex;
+            SeatPosition = seatPosition;
         }
 
         /// <summary>Chuyển trạng thái FSM hiện tại: gọi Exit trạng thái cũ rồi Enter trạng thái mới.</summary>
@@ -130,6 +188,8 @@ namespace DreamCafe.Gameplay.Customer
             Order = null;
             AssignedCounter = null;
             AssignedSeat = null;
+            SeatReassignRequest = null;
+            _mover?.Stop();
             _onFinished = null;
 
             base.OnDespawned();

@@ -35,12 +35,6 @@ namespace DreamCafe.SystemControl.UI
             Unbind();
         }
 
-        private void Update()
-        {
-            // Tự động tick cộng dồn passive income
-            _currencyController?.Tick(Time.deltaTime);
-        }
-
         /// <summary>
         /// Liên kết View với CurrencyController để tự động cập nhật UI.
         /// </summary>

@@ -7,13 +7,15 @@ namespace DreamCafe.Gameplay.Customer.States
     {
         public void Enter(CustomerController ctx)
         {
-            ctx.AssignedSeat?.SetSeatOccupied(ctx.SeatIndex, false);
-            ctx.Agent.SetDestination(ctx.ExitPosition);
+            ctx.AssignedSeat?.ReleaseSeat(ctx.SeatIndex);
+
+            // Không tìm nổi đường ra (bị quây kín) thì biến mất luôn, còn hơn đứng chôn chân giữa quán.
+            if (!ctx.MoveTo(ctx.ExitPosition)) ctx.Finish();
         }
 
         public void Tick(CustomerController ctx, float deltaTime)
         {
-            if (NavMeshArrivalUtility.HasArrived(ctx.Agent))
+            if (ctx.HasArrived)
             {
                 ctx.Finish();
             }

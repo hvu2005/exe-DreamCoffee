@@ -58,7 +58,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.25, y: 1.25, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6466937742033999250}
@@ -176,6 +176,11 @@ MonoBehaviour:
   _seatAnchors: []
   _promptBubble: {fileID: 0}
   _emptyIndicator: {fileID: 6687070268551046548}
+  _wallPerspective: 0
+  _overrideSorting: 0
+  _customSortingLayer: Default
+  _customSortingOrder: 18
+  _itemOffsets: []
 --- !u!61 &4863437193863370724
 BoxCollider2D:
   m_ObjectHideFlags: 0

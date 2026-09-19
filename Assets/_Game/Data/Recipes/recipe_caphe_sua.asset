@@ -23,4 +23,5 @@ MonoBehaviour:
   - milk
   _craftTimeSeconds: 3
   _basePrice: 25000
+  _moneyPerSecondBonus: 1
   _isDefaultUnlocked: 1

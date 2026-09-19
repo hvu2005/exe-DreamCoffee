@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &8304596265142406704
+--- !u!1 &8147591200395446834
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,39 +8,38 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7222179897157001536}
-  - component: {fileID: 532269180954773997}
-  - component: {fileID: 5263750048547284999}
+  - component: {fileID: 1283332137544456677}
+  - component: {fileID: 8837566258459146252}
   m_Layer: 0
-  m_Name: Prefab_Bakery_Display
+  m_Name: Art
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7222179897157001536
+--- !u!4 &1283332137544456677
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8304596265142406704}
+  m_GameObject: {fileID: 8147591200395446834}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.38, y: 0.38, z: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.020244468, w: 0.9997951}
+  m_LocalPosition: {x: 0.0019081273, y: 0.3720495, z: 0}
+  m_LocalScale: {x: 0.38162547, y: 0.38162547, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &532269180954773997
+  m_Father: {fileID: 7222179897157001536}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 2.32}
+--- !u!212 &8837566258459146252
 SpriteRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8304596265142406704}
+  m_GameObject: {fileID: 8147591200395446834}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -92,6 +91,40 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &8304596265142406704
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7222179897157001536}
+  - component: {fileID: 5263750048547284999}
+  - component: {fileID: 3100843363882255693}
+  m_Layer: 0
+  m_Name: Prefab_Bakery_Display
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7222179897157001536
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8304596265142406704}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1283332137544456677}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &5263750048547284999
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -126,11 +159,11 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.88500005}
+  m_Offset: {x: 0, y: 0.36}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.2}
-    oldSize: {x: 2.83, y: 2.95}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 2.83, y: 3.26}
     newSize: {x: 2.83, y: 2.95}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -138,3 +171,23 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.2, y: 1.2}
   m_EdgeRadius: 0
+--- !u!114 &3100843363882255693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8304596265142406704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c37a9dd19d11b494dad7cf32a9220e67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.SystemControl.Decor.GridOccupant
+  _blockedCells:
+  - {x: 0, y: 0}
+  - {x: 0, y: 1}
+  _seats: []
+  _artRoot: {fileID: 1283332137544456677}
+  _artOffset: {x: 0.0019081273, y: 0.3720495}
+  _anchorOverride: {fileID: 0}
+  _drawGizmos: 1
