@@ -14,13 +14,29 @@ namespace DreamCafe.SystemControl.Decor
         [SerializeField] private List<DecorSlot> _slots = new();
         [SerializeField] private List<ExpansionZoneView> _zones = new();
 
-        [Header("Giao diện chọn nội thất")]
+        [Header("Giao diện chọn nội thất & Mở rộng")]
         [SerializeField] private DecorPlacementPanel _placementPanel;
+        [SerializeField] private ZoneUnlockPopupUI _unlockPopup;
+
+        [Header("Danh sách khu vực khóa (Tự do tùy chỉnh trong Inspector)")]
+        [SerializeField] private List<LockedZoneConfig> _lockedZones = new()
+        {
+            new LockedZoneConfig { zoneId = ExpansionZoneId.Lounge_Zone2, unlockPrice = 400000, displayName = "Sảnh Trong Nhà", reputationBonus = 1000 },
+            new LockedZoneConfig { zoneId = ExpansionZoneId.OutdoorPatio_Zone3, unlockPrice = 1000000, displayName = "Sân Hiên Ngoài Trời", reputationBonus = 2500 }
+        };
 
         private DecorController _decorController;
         private CurrencyController _currencyController;
 
         public DecorPlacementPanel PlacementPanel { get => _placementPanel; set => _placementPanel = value; }
+        public ZoneUnlockPopupUI UnlockPopup { get => _unlockPopup; set => _unlockPopup = value; }
+        public IReadOnlyList<LockedZoneConfig> LockedZones => _lockedZones;
+
+        public bool TryGetLockedConfig(ExpansionZoneId zoneId, out LockedZoneConfig config)
+        {
+            config = _lockedZones.Find(z => z != null && z.zoneId == zoneId);
+            return config != null;
+        }
 
         private void OnEnable()
         {
@@ -60,6 +76,15 @@ namespace DreamCafe.SystemControl.Decor
 
             if (_decorController != null)
             {
+                // Đồng bộ các khu vực cần khóa theo danh sách Inspector chỉ định
+                foreach (var cfg in _lockedZones)
+                {
+                    if (cfg != null)
+                    {
+                        _decorController.OverrideZoneLocked(cfg.zoneId, true);
+                    }
+                }
+
                 _decorController.DecorEquipped += OnDecorEquipped;
                 _decorController.DecorUnequipped += OnDecorUnequipped;
                 _decorController.ZoneUnlocked += OnZoneUnlocked;
@@ -93,9 +118,16 @@ namespace DreamCafe.SystemControl.Decor
             foreach (var zoneView in _zones)
             {
                 if (zoneView == null) continue;
-                bool isUnlocked = _decorController.IsZoneUnlocked(zoneView.ZoneId);
-                var zoneData = _decorController.GetZone(zoneView.ZoneId);
-                zoneView.SetUnlocked(isUnlocked, zoneData);
+
+                if (TryGetLockedConfig(zoneView.ZoneId, out var lockCfg))
+                {
+                    bool isUnlocked = _decorController.IsZoneUnlocked(zoneView.ZoneId);
+                    zoneView.ApplyLockConfig(lockCfg, isUnlocked);
+                }
+                else
+                {
+                    zoneView.SetUnlocked(true);
+                }
             }
 
             // 2. Cập nhật các Slot
@@ -204,7 +236,31 @@ namespace DreamCafe.SystemControl.Decor
         {
             if (_decorController == null || _currencyController == null) return;
 
-            _decorController.TryUnlockZone(zoneId, _currencyController);
+            var zoneView = _zones.Find(z => z != null && z.ZoneId == zoneId);
+
+            if (_unlockPopup == null)
+            {
+                _unlockPopup = FindFirstObjectByType<ZoneUnlockPopupUI>(FindObjectsInactive.Include);
+            }
+
+            if (_unlockPopup != null && TryGetLockedConfig(zoneId, out var config))
+            {
+                _unlockPopup.Show(config, _currencyController, _decorController, onSuccess: () =>
+                {
+                    if (zoneView != null)
+                    {
+                        zoneView.UnlockWithAnimation(() => RebuildGrid());
+                    }
+                    else
+                    {
+                        RebuildGrid();
+                    }
+                });
+            }
+            else
+            {
+                _decorController.TryUnlockZone(zoneId, _currencyController);
+            }
         }
 
         public void ValidateOrCollectSlots()

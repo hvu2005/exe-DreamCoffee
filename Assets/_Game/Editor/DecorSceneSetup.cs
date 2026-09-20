@@ -387,7 +387,7 @@ namespace DreamCafe.EditorTools
             rtPanel.anchorMin = new Vector2(0.5f, 0f);
             rtPanel.anchorMax = new Vector2(0.5f, 0f);
             rtPanel.pivot = new Vector2(0.5f, 0f);
-            rtPanel.sizeDelta = new Vector2(860f, 320f);
+            rtPanel.sizeDelta = new Vector2(1320f, 370f);
             rtPanel.anchoredPosition = new Vector2(0f, 25f);
 
             var imgPanel = panelGo.AddComponent<UnityEngine.UI.Image>();
@@ -400,8 +400,8 @@ namespace DreamCafe.EditorTools
             rtHeader.anchorMin = new Vector2(0f, 1f);
             rtHeader.anchorMax = new Vector2(1f, 1f);
             rtHeader.pivot = new Vector2(0.5f, 1f);
-            rtHeader.sizeDelta = new Vector2(-40f, 60f);
-            rtHeader.anchoredPosition = new Vector2(0f, -8f);
+            rtHeader.sizeDelta = new Vector2(-50f, 60f);
+            rtHeader.anchoredPosition = new Vector2(0f, -12f);
 
             // Title
             var titleGo = new GameObject("TitleText");
@@ -485,28 +485,73 @@ namespace DreamCafe.EditorTools
             tmpUnequip.alignment = TextAlignmentOptions.Center;
             tmpUnequip.color = Color.white;
 
-            // Cards Container
+            // ScrollView Container (Horizontal Scroll)
+            var scrollGo = new GameObject("ScrollView");
+            scrollGo.transform.SetParent(panelGo.transform, false);
+            var rtScroll = scrollGo.AddComponent<RectTransform>();
+            rtScroll.anchorMin = new Vector2(0f, 0f);
+            rtScroll.anchorMax = new Vector2(1f, 1f);
+            rtScroll.pivot = new Vector2(0.5f, 0.5f);
+            rtScroll.offsetMin = new Vector2(25f, 15f);
+            rtScroll.offsetMax = new Vector2(-25f, -80f);
+
+            var scrollRect = scrollGo.AddComponent<UnityEngine.UI.ScrollRect>();
+            scrollRect.horizontal = true;
+            scrollRect.vertical = false;
+            scrollRect.movementType = UnityEngine.UI.ScrollRect.MovementType.Elastic;
+            scrollRect.elasticity = 0.1f;
+            scrollRect.inertia = true;
+            scrollRect.decelerationRate = 0.135f;
+            scrollRect.scrollSensitivity = 25f;
+
+            // Viewport with RectMask2D
+            var viewportGo = new GameObject("Viewport");
+            viewportGo.transform.SetParent(scrollGo.transform, false);
+            var rtViewport = viewportGo.AddComponent<RectTransform>();
+            rtViewport.anchorMin = Vector2.zero;
+            rtViewport.anchorMax = Vector2.one;
+            rtViewport.pivot = new Vector2(0f, 1f);
+            rtViewport.sizeDelta = Vector2.zero;
+            rtViewport.offsetMin = Vector2.zero;
+            rtViewport.offsetMax = Vector2.zero;
+            viewportGo.AddComponent<UnityEngine.UI.RectMask2D>();
+
+            // Cards Container inside Viewport
             var cardsGo = new GameObject("CardsContainer");
-            cardsGo.transform.SetParent(panelGo.transform, false);
+            cardsGo.transform.SetParent(viewportGo.transform, false);
             var rtCards = cardsGo.AddComponent<RectTransform>();
             rtCards.anchorMin = new Vector2(0f, 0f);
-            rtCards.anchorMax = new Vector2(1f, 1f);
-            rtCards.pivot = new Vector2(0.5f, 0.5f);
-            rtCards.offsetMin = new Vector2(25f, 15f);
-            rtCards.offsetMax = new Vector2(-25f, -70f);
+            rtCards.anchorMax = new Vector2(0f, 1f);
+            rtCards.pivot = new Vector2(0f, 0.5f);
+            rtCards.sizeDelta = Vector2.zero;
+
             var hlg = cardsGo.AddComponent<UnityEngine.UI.HorizontalLayoutGroup>();
-            hlg.spacing = 16f;
-            hlg.childAlignment = TextAnchor.MiddleCenter;
+            hlg.spacing = 18f;
+            hlg.padding = new RectOffset(15, 15, 10, 10);
+            hlg.childAlignment = TextAnchor.MiddleLeft;
             hlg.childControlWidth = false;
             hlg.childControlHeight = false;
             hlg.childForceExpandWidth = false;
             hlg.childForceExpandHeight = false;
 
+            var csf = cardsGo.AddComponent<UnityEngine.UI.ContentSizeFitter>();
+            csf.horizontalFit = UnityEngine.UI.ContentSizeFitter.FitMode.PreferredSize;
+            csf.verticalFit = UnityEngine.UI.ContentSizeFitter.FitMode.Unconstrained;
+
+            scrollRect.content = rtCards;
+            scrollRect.viewport = rtViewport;
+
             // Card Template
             var cardTplGo = new GameObject("CardTemplate");
             cardTplGo.transform.SetParent(panelGo.transform, false);
             var rtCardTpl = cardTplGo.AddComponent<RectTransform>();
-            rtCardTpl.sizeDelta = new Vector2(240f, 220f);
+            rtCardTpl.sizeDelta = new Vector2(250f, 250f);
+            var leCard = cardTplGo.AddComponent<UnityEngine.UI.LayoutElement>();
+            leCard.minWidth = 250f;
+            leCard.preferredWidth = 250f;
+            leCard.minHeight = 250f;
+            leCard.preferredHeight = 250f;
+
             var imgCardBg = cardTplGo.AddComponent<UnityEngine.UI.Image>();
             imgCardBg.color = new Color(0.16f, 0.19f, 0.25f, 0.95f);
 
@@ -517,8 +562,8 @@ namespace DreamCafe.EditorTools
             rtIcon.anchorMin = new Vector2(0.5f, 1f);
             rtIcon.anchorMax = new Vector2(0.5f, 1f);
             rtIcon.pivot = new Vector2(0.5f, 1f);
-            rtIcon.sizeDelta = new Vector2(65f, 65f);
-            rtIcon.anchoredPosition = new Vector2(0f, -8f);
+            rtIcon.sizeDelta = new Vector2(75f, 75f);
+            rtIcon.anchoredPosition = new Vector2(0f, -10f);
             var imgIcon = iconGo.AddComponent<UnityEngine.UI.Image>();
             imgIcon.preserveAspect = true;
 
@@ -529,8 +574,8 @@ namespace DreamCafe.EditorTools
             rtName.anchorMin = new Vector2(0.5f, 1f);
             rtName.anchorMax = new Vector2(0.5f, 1f);
             rtName.pivot = new Vector2(0.5f, 1f);
-            rtName.sizeDelta = new Vector2(220f, 24f);
-            rtName.anchoredPosition = new Vector2(0f, -78f);
+            rtName.sizeDelta = new Vector2(230f, 26f);
+            rtName.anchoredPosition = new Vector2(0f, -88f);
             var tmpName = nameGo.AddComponent<TextMeshProUGUI>();
             if (font != null) tmpName.font = font;
             tmpName.fontSize = 15f;
@@ -544,8 +589,8 @@ namespace DreamCafe.EditorTools
             rtTheme.anchorMin = new Vector2(0.5f, 1f);
             rtTheme.anchorMax = new Vector2(0.5f, 1f);
             rtTheme.pivot = new Vector2(0.5f, 1f);
-            rtTheme.sizeDelta = new Vector2(220f, 18f);
-            rtTheme.anchoredPosition = new Vector2(0f, -102f);
+            rtTheme.sizeDelta = new Vector2(230f, 18f);
+            rtTheme.anchoredPosition = new Vector2(0f, -114f);
             var tmpTheme = themeGo.AddComponent<TextMeshProUGUI>();
             if (font != null) tmpTheme.font = font;
             tmpTheme.fontSize = 11f;
@@ -559,8 +604,8 @@ namespace DreamCafe.EditorTools
             rtStats.anchorMin = new Vector2(0.5f, 1f);
             rtStats.anchorMax = new Vector2(0.5f, 1f);
             rtStats.pivot = new Vector2(0.5f, 1f);
-            rtStats.sizeDelta = new Vector2(220f, 36f);
-            rtStats.anchoredPosition = new Vector2(0f, -122f);
+            rtStats.sizeDelta = new Vector2(230f, 38f);
+            rtStats.anchoredPosition = new Vector2(0f, -134f);
             var tmpStats = statsGo.AddComponent<TextMeshProUGUI>();
             if (font != null) tmpStats.font = font;
             tmpStats.fontSize = 11f;
@@ -574,8 +619,8 @@ namespace DreamCafe.EditorTools
             rtActBtn.anchorMin = new Vector2(0.5f, 0f);
             rtActBtn.anchorMax = new Vector2(0.5f, 0f);
             rtActBtn.pivot = new Vector2(0.5f, 0f);
-            rtActBtn.sizeDelta = new Vector2(210f, 34f);
-            rtActBtn.anchoredPosition = new Vector2(0f, 10f);
+            rtActBtn.sizeDelta = new Vector2(220f, 36f);
+            rtActBtn.anchoredPosition = new Vector2(0f, 12f);
             var imgAct = actionBtnGo.AddComponent<UnityEngine.UI.Image>();
             imgAct.color = new Color(0.88f, 0.50f, 0.12f);
             var btnAct = actionBtnGo.AddComponent<UnityEngine.UI.Button>();
@@ -615,6 +660,7 @@ namespace DreamCafe.EditorTools
             soPanel.FindProperty("_unequipButton").objectReferenceValue = btnUnequip;
             soPanel.FindProperty("_cardsContainer").objectReferenceValue = cardsGo.transform;
             soPanel.FindProperty("_cardTemplate").objectReferenceValue = cardTplGo;
+            soPanel.FindProperty("_scrollRect").objectReferenceValue = scrollRect;
             soPanel.ApplyModifiedProperties();
 
             panelGo.SetActive(false);

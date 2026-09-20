@@ -23,6 +23,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 159181444683e674596cc3a0c8e70e3a, type: 2}
   - {fileID: 11400000, guid: 7c46785f37ba56a4f8fb16801b140698, type: 2}
   - {fileID: 11400000, guid: d73765ccf0cee4e45832b3c7ccac5504, type: 2}
+  - {fileID: 11400000, guid: 9b58a916d3d3fb14f80d81caf09ac5da, type: 2}
+  - {fileID: 11400000, guid: 3afa63793636fe442bb9a78d2aafd609, type: 2}
+  - {fileID: 11400000, guid: 3a393f91b3f60d54cb6364680663074a, type: 2}
+  - {fileID: 11400000, guid: 1b17992d0fc58c4458160948f32ccc16, type: 2}
   _zones:
   - {fileID: 11400000, guid: 499d3f14cf362b04cbd26a94f5a55e0b, type: 2}
   - {fileID: 11400000, guid: e0fdb22f59aafc34080e44574eb3a163, type: 2}

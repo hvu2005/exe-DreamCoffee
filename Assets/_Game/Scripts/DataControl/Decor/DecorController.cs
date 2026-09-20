@@ -77,6 +77,21 @@ namespace DreamCafe.DataControl
             }
         }
 
+        /// <summary>
+        /// Ghi đè trạng thái khóa/mở của một khu vực (dành cho cấu hình tùy biến từ Inspector của Scene).
+        /// </summary>
+        public void OverrideZoneLocked(ExpansionZoneId zoneId, bool isLocked)
+        {
+            if (isLocked)
+            {
+                _unlockedZoneIds.Remove(zoneId);
+            }
+            else
+            {
+                _unlockedZoneIds.Add(zoneId);
+            }
+        }
+
         public void RegisterFromRepository(IDecorRepository repository)
         {
             if (repository == null) return;

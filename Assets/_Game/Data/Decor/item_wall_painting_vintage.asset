@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a272b10859a620843812a86745dda33f, type: 3}
+  m_Name: item_wall_painting_vintage
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.DecorItem
+  _id: item_wall_painting_vintage
+  _displayName: "Tranh Th\u1EF1c V\u1EADt C\xE0 Ph\xEA C\u1ED5 \u0110i\u1EC3n"
+  _description: "B\u1EE9c tranh kh\u1EAFc h\u1ECDa nh\xE1nh c\xE0 ph\xEA Coffea Arabica
+    tr\xEAn gi\u1EA5y da c\u1ED5 khung g\u1ED7 ch\u1EA1m tr\u1ED5."
+  _category: 4
+  _theme: 1
+  _tier: 2
+  _price: 24000
+  _requiredReputation: 25
+  _reputationBonus: 100
+  _isDefaultUnlocked: 0
+  _patienceBonusPercent: 0.05
+  _tipChanceBonus: 0.03
+  _seatingCapacity: 0
+  _moneyPerSecondBonus: 3.5
+  _gridFootprint: {x: 1, y: 1}
+  _extraCells: []
+  _icon: {fileID: 21300000, guid: df773b900cb79174a8b2183c793b73c5, type: 3}
+  _prefab: {fileID: 3677922125705609822, guid: b074e7afa1029334d8f9ed56872a53f2, type: 3}
+  _defaultSpawnOffset: {x: 0, y: 0}
+  _rightWallSprite: {fileID: 21300000, guid: 6e5eaa27bd00c714e9bf71ef8c761fb8, type: 3}

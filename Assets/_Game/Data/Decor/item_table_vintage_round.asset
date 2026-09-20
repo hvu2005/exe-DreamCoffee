@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a272b10859a620843812a86745dda33f, type: 3}
+  m_Name: item_table_vintage_round
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.DecorItem
+  _id: item_table_vintage_round
+  _displayName: "B\xE0n Tr\xF2n G\u1ED7 G\u1EE5 C\u1ED5 \u0110i\u1EC3n 2 Gh\u1EBF"
+  _description: "B\xE0n g\u1ED7 g\u1EE5 ch\u1EA1m kh\u1EAFc tinh t\u1EBF k\xE8m 2
+    gh\u1EBF da b\xF2 kh\xE2u n\xFAt th\u1EE7 c\xF4ng phong c\xE1ch Ch\xE2u \xC2u
+    th\u1EBF k\u1EF7 19."
+  _category: 0
+  _theme: 1
+  _tier: 2
+  _price: 38000
+  _requiredReputation: 40
+  _reputationBonus: 150
+  _isDefaultUnlocked: 0
+  _patienceBonusPercent: 0.07
+  _tipChanceBonus: 0.04
+  _seatingCapacity: 2
+  _moneyPerSecondBonus: 0
+  _gridFootprint: {x: 1, y: 1}
+  _extraCells: []
+  _icon: {fileID: 21300000, guid: 0e258eef909151847a713778db6b7425, type: 3}
+  _prefab: {fileID: 512306573307692005, guid: 62159cbdca9f2ea44978b69df80a5440, type: 3}
+  _defaultSpawnOffset: {x: 0, y: 0}
+  _rightWallSprite: {fileID: 0}
