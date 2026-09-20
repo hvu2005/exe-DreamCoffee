@@ -95,11 +95,21 @@ namespace DreamCafe.SystemControl.Decor
                 NormalizeWallSlotTransforms();
             }
 
-            // Bảo đảm luôn có Collider2D để nhận tương tác OnMouseDown
+            // Bảo đảm luôn có Collider2D để nhận tương tác OnMouseDown.
+            //
+            // Cắt đúng hình thoi MỘT ô chứ không dùng khung 1.0 x 0.8 như trước: slot chỉ đứng trên
+            // một ô, mà khung chữ nhật thì trùm luôn cả bốn ô chéo quanh nó — bấm vào ô bên cạnh
+            // cũng chọn phải slot này, và hai slot kề nhau thì khung chồng lên nhau.
             if (GetComponent<Collider2D>() == null)
             {
-                var col = gameObject.AddComponent<BoxCollider2D>();
-                col.size = new Vector2(1.0f, 0.8f);
+                var col = gameObject.AddComponent<PolygonCollider2D>();
+                Vector2 half = CellHalfExtents();
+                col.pathCount = 1;
+                col.SetPath(0, new[]
+                {
+                    new Vector2(-half.x, 0f), new Vector2(0f, half.y),
+                    new Vector2(half.x, 0f), new Vector2(0f, -half.y)
+                });
             }
         }
 
@@ -123,6 +133,15 @@ namespace DreamCafe.SystemControl.Decor
             {
                 _emptyIndicator.SetActive(_currentDecorItem == null);
             }
+        }
+
+        /// <summary>Nửa kích thước một ô sàn; không có Grid trong scene thì lấy mặc định 1 x 0.5.</summary>
+        private static Vector2 CellHalfExtents()
+        {
+            var grid = FindFirstObjectByType<Grid>(FindObjectsInactive.Include);
+            return grid != null
+                ? new Vector2(grid.cellSize.x * 0.5f, grid.cellSize.y * 0.5f)
+                : new Vector2(0.5f, 0.25f);
         }
 
         public void OnPointerClick(PointerEventData eventData)

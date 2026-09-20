@@ -90,7 +90,7 @@ namespace DreamCafe.SystemControl.Decor
         /// đẹp mắt — lấy theo art thì món nhảy sang ô bên cạnh, bản đồ ô sai một ô so với chỗ
         /// người thiết kế đặt.
         /// </summary>
-        private Transform AnchorTransform
+        public Transform AnchorTransform
         {
             get
             {
