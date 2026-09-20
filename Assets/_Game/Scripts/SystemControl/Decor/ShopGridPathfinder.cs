@@ -21,6 +21,7 @@ namespace DreamCafe.SystemControl.Decor
         private const int StraightCost = 10;
         private const int DiagonalCost = 14;
         private const int MaxNodes = 4096;
+        private const int MaxGoalRadius = 4;
 
         private static readonly Vector3Int[] StraightDirs =
         {
@@ -35,21 +36,25 @@ namespace DreamCafe.SystemControl.Decor
         /// <summary>
         /// Tìm đường từ ô này sang ô kia. <paramref name="path"/> trả về gồm cả ô đích, không gồm ô
         /// xuất phát. Trả về false nếu bít đường hoàn toàn.
+        ///
+        /// Đích bị chiếm (ô ghế có bàn chắn, hoặc người chơi vừa kê đồ đè lên) thì nhận CẢ VÒNG ô
+        /// đi được quanh nó làm đích — ô nào tới rẻ nhất thì dừng ở đó. Không chấm trước một ô rồi
+        /// mới tìm đường tới đúng ô ấy: chấm trước là chấm bằng hình học, chưa biết khách đang đứng
+        /// phía nào, nên khách đi ngang sau lưng ghế vẫn phải vòng tiếp sang ô bên hông đã chấm.
         /// </summary>
         public static bool TryFindPath(ShopGrid grid, Vector3Int start, Vector3Int goal, List<Vector3Int> path)
         {
             path.Clear();
             if (grid == null) return false;
 
-            // Đích là ô bị chiếm (ghế có bàn chắn, hoặc người chơi vừa kê đồ đè lên) thì nhắm sang
-            // ô đi được gần nhất thay vì bỏ cuộc — khách vẫn tới sát nơi cần đến.
-            if (!grid.IsWalkable(goal) && !TryFindNearestWalkable(grid, goal, out goal)) return false;
-            if (start == goal) return true;
+            var goals = new List<Vector3Int>();
+            if (!CollectGoals(grid, goal, goals)) return false;
+            if (goals.Contains(start)) return true;
 
             var open = new List<Vector3Int> { start };
             var cameFrom = new Dictionary<Vector3Int, Vector3Int>();
             var gScore = new Dictionary<Vector3Int, int> { [start] = 0 };
-            var fScore = new Dictionary<Vector3Int, int> { [start] = Heuristic(start, goal) };
+            var fScore = new Dictionary<Vector3Int, int> { [start] = Heuristic(start, goals) };
             var closed = new HashSet<Vector3Int>();
             int visited = 0;
 
@@ -63,7 +68,7 @@ namespace DreamCafe.SystemControl.Decor
                 }
 
                 Vector3Int current = open[bestIndex];
-                if (current == goal)
+                if (goals.Contains(current))
                 {
                     Reconstruct(cameFrom, current, start, path);
                     return true;
@@ -105,7 +110,7 @@ namespace DreamCafe.SystemControl.Decor
 
                     cameFrom[next] = current;
                     gScore[next] = tentative;
-                    fScore[next] = tentative + Heuristic(next, goal);
+                    fScore[next] = tentative + Heuristic(next, goals);
                     if (!open.Contains(next)) open.Add(next);
                 }
             }
@@ -133,8 +138,13 @@ namespace DreamCafe.SystemControl.Decor
             if (grid == null) return false;
             if (grid.IsWalkable(origin)) return true;
 
-            for (int radius = 1; radius <= 4; radius++)
+            for (int radius = 1; radius <= MaxGoalRadius; radius++)
             {
+                // Trong cùng một vòng, lấy ô gần tâm nhất. Quét theo thứ tự dx/dy trần thì ô chéo
+                // (-1,-1) luôn ra trước dù có ô kề cạnh sát hơn.
+                bool found = false;
+                float bestDistance = float.MaxValue;
+
                 for (int dx = -radius; dx <= radius; dx++)
                 {
                     for (int dy = -radius; dy <= radius; dy++)
@@ -145,10 +155,52 @@ namespace DreamCafe.SystemControl.Decor
                         var candidate = new Vector3Int(origin.x + dx, origin.y + dy, origin.z);
                         if (!grid.IsWalkable(candidate)) continue;
 
+                        float distance = dx * dx + dy * dy;
+                        if (found && distance >= bestDistance) continue;
+
+                        bestDistance = distance;
                         result = candidate;
-                        return true;
+                        found = true;
                     }
                 }
+
+                if (found) return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Tập ô được tính là "tới nơi". Đích đi được thì chỉ có chính nó. Đích bị chiếm thì lấy
+        /// TOÀN BỘ ô đi được của vòng gần nhất còn chỗ trống — tám phía quanh cái ghế đều ngồi
+        /// được, kể cả đứng sau lưng ghế; A* tự dừng ở ô nào rẻ nhất so với chỗ khách đang đứng.
+        /// Chỉ khi cả vòng bị bịt mới nới ra vòng ngoài.
+        /// </summary>
+        private static bool CollectGoals(ShopGrid grid, Vector3Int goal, List<Vector3Int> goals)
+        {
+            goals.Clear();
+
+            if (grid.IsWalkable(goal))
+            {
+                goals.Add(goal);
+                return true;
+            }
+
+            for (int radius = 1; radius <= MaxGoalRadius; radius++)
+            {
+                for (int dx = -radius; dx <= radius; dx++)
+                {
+                    for (int dy = -radius; dy <= radius; dy++)
+                    {
+                        // Chỉ xét viền của vòng hiện tại, bên trong đã quét ở vòng trước.
+                        if (Mathf.Abs(dx) != radius && Mathf.Abs(dy) != radius) continue;
+
+                        var candidate = new Vector3Int(goal.x + dx, goal.y + dy, goal.z);
+                        if (grid.IsWalkable(candidate)) goals.Add(candidate);
+                    }
+                }
+
+                if (goals.Count > 0) return true;
             }
 
             return false;
@@ -156,6 +208,22 @@ namespace DreamCafe.SystemControl.Decor
 
         private static int Score(Dictionary<Vector3Int, int> map, Vector3Int cell) =>
             map.TryGetValue(cell, out int value) ? value : int.MaxValue / 2;
+
+        /// <summary>
+        /// Ước lượng quãng còn lại tới đích GẦN NHẤT trong tập. Phải lấy min chứ không ước lượng
+        /// tới ô ghế ở giữa: ước lượng tới ô giữa thì cao hơn quãng thật tới ô vành, A* mất tính
+        /// chấp nhận được và có thể chốt nhầm một ô vành đi tốn hơn.
+        /// </summary>
+        private static int Heuristic(Vector3Int cell, List<Vector3Int> goals)
+        {
+            int best = int.MaxValue;
+            for (int i = 0; i < goals.Count; i++)
+            {
+                int h = Heuristic(cell, goals[i]);
+                if (h < best) best = h;
+            }
+            return best == int.MaxValue ? 0 : best;
+        }
 
         private static int Heuristic(Vector3Int a, Vector3Int b)
         {

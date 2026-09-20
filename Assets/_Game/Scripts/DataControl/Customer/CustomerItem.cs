@@ -25,6 +25,10 @@ namespace DreamCafe.DataControl
         [SerializeField, Tooltip("Ảnh đại diện hoặc sprite của khách hàng.")]
         private Sprite _avatar;
 
+        [SerializeField, Tooltip("Bộ khung hình của khách này. Bỏ trống cả bộ thì dùng bộ dự phòng " +
+            "khai trên CustomerStickerAnimator.")]
+        private CustomerAnimSet _anim;
+
         [SerializeField, Tooltip("Nhóm đối tượng khách hàng.")]
         private CustomerType _customerType = CustomerType.Student;
 
@@ -69,6 +73,12 @@ namespace DreamCafe.DataControl
 
         /// <summary>Ảnh đại diện.</summary>
         public Sprite Avatar => _avatar;
+
+        /// <summary>
+        /// Bộ khung hình của khách này. Cố ý KHÔNG lui về <see cref="Avatar"/> khi chưa khai:
+        /// avatar là ảnh chân dung cho UI, đem ra làm hình chạy trên sàn thì sai cỡ và sai góc nhìn.
+        /// </summary>
+        public CustomerAnimSet Anim => _anim;
 
         /// <summary>Phân loại khách.</summary>
         public CustomerType CustomerType => _customerType;

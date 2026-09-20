@@ -170,7 +170,7 @@ namespace DreamCafe.SystemControl.Customer
                 StandPoint = standPoint,
                 Seat = seat,
                 SeatIndex = seatIndex,
-                SeatPoint = seat.SeatSitPosition(seatIndex),
+                SeatPoint = seat.SeatWorldPosition(seatIndex),
                 ExitPoint = _spawnPoint,
                 OnFinished = ReleaseCustomer,
                 SeatReassignRequest = TryReassignSeat
@@ -258,7 +258,7 @@ namespace DreamCafe.SystemControl.Customer
                 return false;
             }
 
-            customer.AssignSeat(seat, seatIndex, seat.SeatSitPosition(seatIndex));
+            customer.AssignSeat(seat, seatIndex, seat.SeatWorldPosition(seatIndex));
             Debug.Log($"[CustomerSceneManager] Đổi chỗ cho khách sang '{seat.name}' (ghế {seatIndex}).");
             return true;
         }

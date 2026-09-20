@@ -372,7 +372,28 @@ namespace DreamCafe.SystemControl.Decor
             {
                 var sorter = instance.GetComponent<Rendering.IsoDepthSorter>();
                 if (sorter == null) sorter = instance.AddComponent<Rendering.IsoDepthSorter>();
-                sorter.Configure(Rendering.IsoDepthMode.PerRenderer, continuous: false);
+
+                // Nút hình của món bị nhích lên một khoảng (_artOffset) cho đẹp mắt, nên điểm đặt
+                // của từng mảnh nằm cao hơn ô nó đứng đúng bằng khoảng đó. Trừ lại thì mọi mảnh
+                // quy về tâm ô thật — cùng một thước với gót chân của khách.
+                var occupant = instance.GetComponent<GridOccupant>();
+                Vector2 ground = occupant != null ? -occupant.ArtOffset : Vector2.zero;
+
+                // Ghế thì ghim thẳng về tâm ô ghế, không suy ra từ transform. Trừ _artOffset chỉ
+                // đúng khi mọi mảnh được đặt đúng ô của nó; bộ sofa không như vậy — ghế của nó lệch
+                // gần nửa đơn vị, tức gần hai hàng ô, đủ để cái ghế vẽ đè lên khách đang ngồi.
+                sorter.ClearGroundPins();
+                if (occupant != null)
+                {
+                    for (int i = 0; i < occupant.SeatCount; i++)
+                    {
+                        var chair = occupant.SeatChairArt(i);
+                        if (chair != null) sorter.PinGround(chair, occupant.SeatWorldPosition(i));
+                    }
+                }
+
+                sorter.Configure(Rendering.IsoDepthMode.PerRenderer, continuous: false,
+                                 groundOffset: ground, layerInCell: Rendering.IsoDepth.SlotFurniture);
                 return;
             }
 

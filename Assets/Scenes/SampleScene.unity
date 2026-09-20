@@ -18285,24 +18285,40 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7282235733819474305, guid: 7290df94cac74084fb18436cee7ce0b5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282235733819474305, guid: 7290df94cac74084fb18436cee7ce0b5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282235733819474305, guid: 7290df94cac74084fb18436cee7ce0b5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.91510445
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282235733819474305, guid: 7290df94cac74084fb18436cee7ce0b5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.141
+      value: 0.463
       objectReference: {fileID: 0}
     - target: {fileID: 7282235733819474305, guid: 7290df94cac74084fb18436cee7ce0b5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.142
+      value: 0.942
       objectReference: {fileID: 0}
     - target: {fileID: 7282235733819474305, guid: 7290df94cac74084fb18436cee7ce0b5, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9999994
+      value: 0.9999424
       objectReference: {fileID: 0}
     - target: {fileID: 7282235733819474305, guid: 7290df94cac74084fb18436cee7ce0b5, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.0011344751
+      value: 0.010733539
       objectReference: {fileID: 0}
     - target: {fileID: 7282235733819474305, guid: 7290df94cac74084fb18436cee7ce0b5, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0.13
+      value: 1.23
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282235733819474305, guid: 7290df94cac74084fb18436cee7ce0b5, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -18336,7 +18352,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.SystemControl.Rendering.IsoDepthSorter
   _mode: 0
   _continuous: 0
-  _groundOffset: 0
+  _groundOffset: {x: 0, y: 0}
+  _layerInCell: 1
 --- !u!1 &1936361984
 GameObject:
   m_ObjectHideFlags: 0
@@ -19518,11 +19535,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5360826209322761718, guid: 78452c2195449f04c8f8f93dbe2531ef, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.41
+      value: 2.956
       objectReference: {fileID: 0}
     - target: {fileID: 5360826209322761718, guid: 78452c2195449f04c8f8f93dbe2531ef, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.93
+      value: -0.715
       objectReference: {fileID: 0}
     - target: {fileID: 5360826209322761718, guid: 78452c2195449f04c8f8f93dbe2531ef, type: 3}
       propertyPath: m_LocalPosition.z

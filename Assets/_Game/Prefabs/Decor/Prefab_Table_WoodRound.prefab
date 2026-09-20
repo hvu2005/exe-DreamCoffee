@@ -278,12 +278,12 @@ MonoBehaviour:
   - {x: 0, y: 0}
   _seats:
   - cell: {x: 0, y: 1}
-    sitOffset: {x: -0.47, y: 0.37}
+    sitOffset: {x: -0.41, y: 0.37}
     sitAdjust: {x: 0, y: 0}
     chairArt: {fileID: 6134311453512144242}
     label: Chair_1
   - cell: {x: 1, y: 0}
-    sitOffset: {x: 0.48, y: 0.37}
+    sitOffset: {x: 0.42, y: 0.37}
     sitAdjust: {x: 0, y: 0}
     chairArt: {fileID: 3930445956544230576}
     label: Chair_2

@@ -22,6 +22,12 @@ namespace DreamCafe.Gameplay.Customer
         [Header("Tham chiếu")]
         [SerializeField] private GridPathFollower _mover;
         [SerializeField] private CustomerView _view;
+        [SerializeField, Tooltip("Bộ làm hình khách nhúc nhích và đổi hình theo hướng đi. Bỏ trống thì tự tìm trên chính nó.")]
+        private CustomerStickerAnimator _sticker;
+
+        /// <summary>Ô khách đứng lúc ngồi xuống, để lúc bật dậy trả về đúng chỗ đó.</summary>
+        private Vector3? _standUpPoint;
+
         [SerializeField, Tooltip("Điểm neo để bong bóng order xuất hiện phía trên đầu")]
         private Transform _ticketAnchor;
 
@@ -40,6 +46,8 @@ namespace DreamCafe.Gameplay.Customer
 
         public GridOccupant AssignedSeat { get; private set; }
         public int SeatIndex { get; private set; }
+
+        /// <summary>Tâm ô ghế. Khách dừng ở ô đi được sát bên rồi ngồi, không bước vào ô này.</summary>
         public Vector3 SeatPosition { get; private set; }
 
         /// <summary>
@@ -55,6 +63,7 @@ namespace DreamCafe.Gameplay.Customer
         private void Reset()
         {
             _mover = GetComponent<GridPathFollower>();
+            _sticker = GetComponent<CustomerStickerAnimator>();
         }
 
         /// <summary>
@@ -79,9 +88,15 @@ namespace DreamCafe.Gameplay.Customer
             // Lấy từ pool ra là xoá sạch đường đi của lượt trước, nếu không khách mới sinh ra sẽ
             // tiếp tục lết theo lộ trình của khách cũ.
             _mover.Teleport(transform.position);
+            _standUpPoint = null;
 
             Definition = spawnCtx.Definition;
             Order = spawnCtx.Order;
+
+            // Giao hình cho bộ animation ngay khi lấy khách ra khỏi pool: nó còn phải xoá tư thế
+            // mà khách lượt trước để lại (đang nhún dở, hoặc đang lật ngược).
+            if (_sticker == null) _sticker = GetComponent<CustomerStickerAnimator>();
+            if (_sticker != null) _sticker.SetDefinition(Definition);
 
             AssignedCounter = spawnCtx.Counter;
             CounterStandIndex = spawnCtx.StandIndex;
@@ -107,8 +122,14 @@ namespace DreamCafe.Gameplay.Customer
         // DI CHUYỂN (các state gọi qua đây, không đụng thẳng vào bộ tìm đường)
         // =====================================================================
 
-        /// <summary>Đi tới một điểm. Trả về false nếu không có đường — nơi gọi tự xử.</summary>
-        public bool MoveTo(Vector3 worldTarget) => _mover.SetDestination(worldTarget);
+        /// <summary>
+        /// Đi tới một điểm. Trả về false nếu không có đường — nơi gọi tự xử.
+        ///
+        /// <paramref name="enterExactly"/> = false thì dừng ở ô đi được sát đích, không bước vào
+        /// đích. Dùng cho ghế: ô ghế bị đồ đạc chiếm nên khách đứng cạnh mà ngồi xuống.
+        /// </summary>
+        public bool MoveTo(Vector3 worldTarget, bool enterExactly = true) =>
+            _mover.SetDestination(worldTarget, enterExactly);
 
         /// <summary>Đứng lại tại chỗ.</summary>
         public void StopMoving() => _mover.Stop();
@@ -117,21 +138,57 @@ namespace DreamCafe.Gameplay.Customer
         public bool HasArrived => _mover.HasArrived;
 
         /// <summary>
-        /// Ép lớp vẽ của khách theo chỗ ngồi: trên cái ghế, dưới mặt bàn. Gọi lúc ngồi xuống.
+        /// Ngồi vào ghế từ ô đang đứng cạnh nó. Thân khách được ĐẶT thẳng sang ô ghế chứ không đi
+        /// bộ nốt quãng cuối: ô ghế bị đồ đạc chiếm nên đó không phải quãng đi được, mà lết vào
+        /// mặt ghế ở tốc độ đi bộ thì trông như trượt băng. Chỉ phần hình bay theo sau một cung
+        /// ngắn, nên mắt vẫn thấy liền mạch.
+        ///
+        /// Đặt thân vào đúng tâm ô ghế cũng là thứ cả hệ thống còn lại trông vào: quy tắc
+        /// <see cref="SystemControl.Rendering.IsoDepth"/> xếp lớp theo ô cộng slot, khách slot 3
+        /// tự nổi trên cái ghế slot 1 cùng ô, còn chìm dưới bàn hay nổi trên bàn là hệ quả của
+        /// việc ô ghế nằm sau hay trước ô bàn. Không cần luật xếp lớp riêng nào.
         /// </summary>
-        public void ApplySeatedSorting()
+        public void SitIntoSeat()
         {
-            if (AssignedSeat == null || SeatIndex < 0) return;
+            Vector3 approach = transform.position;
+            _standUpPoint = approach;
+            _mover.Teleport(SeatPosition);
 
-            var sorter = GetComponent<SystemControl.Rendering.IsoDepthSorter>();
-            if (sorter != null) sorter.SetOrderOverride(AssignedSeat.SeatedSortingOrder(SeatIndex));
+            if (_sticker == null) return;
+
+            // Nhích hình lên mặt ghế, và quay mặt về phía cái bàn. Đo sau khi đã đặt thân vào ô
+            // ghế nên hai số này chỉ phụ thuộc bộ bàn ghế, không phụ thuộc khách đi tới từ phía nào.
+            Vector2 offset = Vector2.zero;
+            Vector2 face = Vector2.zero;
+            if (AssignedSeat != null && SeatIndex >= 0)
+            {
+                offset = (Vector2)(AssignedSeat.SeatSitPosition(SeatIndex) - transform.position);
+                face = (Vector2)(AssignedSeat.AnchorTransform.position - transform.position);
+            }
+
+            _sticker.SetSeated(true, offset, face);
+            _sticker.FlyFrom(approach - (transform.position + (Vector3)offset));
         }
 
-        /// <summary>Bỏ ép lớp vẽ, quay lại xếp theo độ sâu (lúc đứng dậy đi).</summary>
-        public void ClearSeatedSorting()
+        /// <summary>
+        /// Bật dậy về đúng ô đã đứng lúc ngồi xuống rồi mới tìm đường ra. Không trả về ô đó thì
+        /// khách khởi hành từ giữa ô ghế — một ô không đi được — và bước đầu tiên trông như chui
+        /// xuyên qua cái ghế.
+        /// </summary>
+        public void StandUpFromSeat()
         {
-            var sorter = GetComponent<SystemControl.Rendering.IsoDepthSorter>();
-            if (sorter != null) sorter.ClearOrderOverride();
+            Vector3 fromVisual = transform.position;
+            if (_sticker != null && AssignedSeat != null && SeatIndex >= 0)
+            {
+                fromVisual = AssignedSeat.SeatSitPosition(SeatIndex);
+            }
+
+            if (_standUpPoint.HasValue) _mover.Teleport(_standUpPoint.Value);
+            _standUpPoint = null;
+
+            if (_sticker == null) return;
+            _sticker.SetSeated(false, Vector2.zero, Vector2.zero);
+            _sticker.FlyFrom(fromVisual - transform.position);
         }
 
         /// <summary>

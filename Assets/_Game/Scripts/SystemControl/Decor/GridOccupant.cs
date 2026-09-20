@@ -46,7 +46,8 @@ namespace DreamCafe.SystemControl.Decor
         private Vector2Int[] _blockedCells = { Vector2Int.zero };
 
         [Header("Ô chỗ ngồi (khách tìm đường tới đây)")]
-        [SerializeField, Tooltip("Mỗi phần tử là một chỗ ngồi. Ô ghế vẫn đi vào được — không thì khách không ngồi xuống nổi.")]
+        [SerializeField, Tooltip("Mỗi phần tử là một chỗ ngồi. Ô ghế CHẶN đường đi như mọi món nội thất " +
+            "khác — khách dừng ở ô sát bên rồi ngồi xuống, không bước vào giữa cái ghế.")]
         private SeatSlot[] _seats = Array.Empty<SeatSlot>();
 
         [Header("Hình vẽ")]
@@ -220,6 +221,12 @@ namespace DreamCafe.SystemControl.Decor
         public Vector3 SeatWorldPosition(int index) => CellCenterFor(_seats[index].cell);
 
         /// <summary>
+        /// Sprite cái ghế của chỗ ngồi này, nếu có khai. Dùng để ghim điểm chạm sàn của nó về đúng
+        /// tâm ô ghế — chỗ nút hình được đặt trong prefab là chỗ trông cho đẹp, không phải ô nó đứng.
+        /// </summary>
+        public SpriteRenderer SeatChairArt(int index) => _seats[index].chairArt;
+
+        /// <summary>
         /// Điểm khách ngồi thật sự. Mặc định là tâm ô, nhưng nếu chỗ ngồi có khai
         /// <see cref="SeatSlot.sitOffset"/> thì lấy theo đó để khách ngồi khít vào mặt ghế trong art.
         /// </summary>
@@ -235,38 +242,6 @@ namespace DreamCafe.SystemControl.Decor
             return new Vector3(anchor.x + total.x, anchor.y + total.y, 0f);
         }
 
-        /// <summary>
-        /// Lớp vẽ cho khách khi ngồi vào chỗ này: **trên cái ghế, dưới cái bàn**. Không có cái này
-        /// thì khách bị ghế che mất (ghế chân thấp hơn nên order cao hơn), nhìn như ngồi chui
-        /// xuống dưới ghế.
-        /// </summary>
-        public int SeatedSortingOrder(int index)
-        {
-            var seat = _seats[index];
-            int chairOrder = seat.chairArt != null ? seat.chairArt.sortingOrder : int.MinValue;
-
-            // Mảnh thân thấp nhất (mặt bàn) là trần trên: khách phải nằm dưới nó.
-            int bodyOrder = int.MaxValue;
-            foreach (var renderer in GetComponentsInChildren<SpriteRenderer>(true))
-            {
-                if (renderer == null || renderer == seat.chairArt) continue;
-
-                bool isSeatArt = false;
-                for (int i = 0; i < SeatCount; i++)
-                {
-                    if (_seats[i].chairArt == renderer) { isSeatArt = true; break; }
-                }
-                if (isSeatArt) continue;
-
-                bodyOrder = Mathf.Min(bodyOrder, renderer.sortingOrder);
-            }
-
-            if (chairOrder == int.MinValue) return bodyOrder == int.MaxValue ? 0 : bodyOrder - 1;
-            if (bodyOrder == int.MaxValue) return chairOrder + 1;
-
-            // Chen vào khoảng giữa ghế và bàn; khít quá thì lấy sát trên ghế.
-            return bodyOrder - chairOrder > 1 ? (chairOrder + bodyOrder) / 2 : chairOrder + 1;
-        }
 
         // =====================================================================
         // GIỮ CHỖ

@@ -17,7 +17,7 @@ namespace DreamCafe.Gameplay.Customer
     public sealed class GridPathFollower : MonoBehaviour
     {
         [SerializeField, Min(0.1f), Tooltip("Tốc độ đi (đơn vị thế giới / giây).")]
-        private float _speed = 1.8f;
+        private float _speed = 1.1f;
 
         [SerializeField, Min(0.001f), Tooltip("Tới gần tâm ô dưới khoảng này thì coi như đã qua ô đó.")]
         private float _waypointTolerance = 0.02f;
@@ -53,7 +53,12 @@ namespace DreamCafe.Gameplay.Customer
         /// Giao đích mới. Trả về false nếu không có đường tới — lúc đó nơi gọi tự quyết định
         /// (đổi chỗ ngồi khác, hay bỏ về).
         /// </summary>
-        public bool SetDestination(Vector3 worldTarget)
+        /// <param name="enterExactly">
+        /// True: chặng cuối đi thẳng vào đúng điểm được giao (chỗ đứng quầy, điểm exit).
+        /// False: dừng ở ô đi được cuối cùng, KHÔNG bước vào đích. Dùng cho ghế — ô ghế bị đồ đạc
+        /// chiếm nên khách phải đứng cạnh mà ngồi xuống, đi hẳn vào là chui vào giữa cái ghế.
+        /// </param>
+        public bool SetDestination(Vector3 worldTarget, bool enterExactly = true)
         {
             _finalTarget = worldTarget;
             _hasTarget = true;
@@ -77,10 +82,17 @@ namespace DreamCafe.Gameplay.Customer
                 return false;
             }
 
-            // Chặng cuối đi thẳng vào đúng điểm được giao (tâm ghế, chỗ đứng quầy) thay vì dừng ở
-            // tâm ô, để khách ngồi khít vào ghế.
-            if (_waypoints.Count > 0) _waypoints[_waypoints.Count - 1] = worldTarget;
-            else _waypoints.Add(worldTarget);
+            if (enterExactly)
+            {
+                // Chặng cuối đi thẳng vào đúng điểm được giao thay vì dừng ở tâm ô.
+                if (_waypoints.Count > 0) _waypoints[_waypoints.Count - 1] = worldTarget;
+                else _waypoints.Add(worldTarget);
+            }
+            else if (_waypoints.Count == 0)
+            {
+                // Đã đứng sẵn ở ô cuối cùng đi được rồi thì không phải đi đâu nữa.
+                _hasTarget = false;
+            }
 
             return true;
         }

@@ -22,6 +22,8 @@ namespace DreamCafe.Gameplay.Customer
 
         public GridOccupant Seat;
         public int SeatIndex;
+
+        /// <summary>Tâm ô ghế. Khách dừng ở ô đi được sát bên rồi ngồi, không bước vào ô này.</summary>
         public Vector3 SeatPoint;
 
         public Transform ExitPoint;

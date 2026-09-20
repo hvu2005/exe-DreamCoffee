@@ -253,8 +253,16 @@ namespace DreamCafe.SystemControl.Decor
         public ShopCellKind GetKind(Vector3Int cell) =>
             _cells.TryGetValue(cell, out var kind) ? kind : ShopCellKind.Free;
 
-        /// <summary>Ô có đi qua được không: phải có gạch sàn và không phải thân nội thất.</summary>
-        public bool IsWalkable(Vector3Int cell) => IsFloor(cell) && GetKind(cell) != ShopCellKind.Furniture;
+        /// <summary>
+        /// Ô có đi qua được không: phải có gạch sàn và không bị món nào chiếm — kể cả ô ghế.
+        ///
+        /// Ô ghế cũng chặn vì khách đi XUYÊN QUA ghế trông rất sai, mà cái ghế thì choán chỗ thật
+        /// chứ không phải khoảng không. Chặn rồi vẫn ngồi được: <see cref="ShopGridPathfinder"/>
+        /// thấy đích không đi được thì tự nhắm sang ô đi được sát bên, rồi
+        /// <see cref="Gameplay.Customer.GridPathFollower"/> thay chặng cuối bằng đúng điểm ngồi —
+        /// khách đi tới cạnh ghế rồi bước vào chỗ ngồi.
+        /// </summary>
+        public bool IsWalkable(Vector3Int cell) => IsFloor(cell) && GetKind(cell) == ShopCellKind.Free;
 
         /// <summary>Tiện cho gameplay: điểm này có đứng/đi được không.</summary>
         public bool IsWalkable(Vector3 world) => IsWalkable(WorldToCell(world));

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace DreamCafe.SystemControl.Rendering
@@ -6,8 +7,13 @@ namespace DreamCafe.SystemControl.Rendering
     public enum IsoDepthMode
     {
         /// <summary>
-        /// Mỗi SpriteRenderer tự so bằng mép dưới của chính nó. Dùng cho nội thất nhiều mảnh:
+        /// Mỗi SpriteRenderer tự so bằng ĐIỂM ĐẶT của chính nó. Dùng cho nội thất nhiều mảnh:
         /// trong một bộ bàn ghế, ghế phía trước tự đè lên mặt bàn còn ghế phía sau tự chìm xuống.
+        ///
+        /// Cố ý lấy <c>transform.position</c> chứ KHÔNG lấy <c>bounds.min.y</c>: bounds tính cả
+        /// viền trong suốt quanh ảnh, mà viền đó mỗi sprite một kiểu (có ảnh 5% có ảnh 50%). Khách
+        /// thì so bằng gót chân, nên hai bên hoá ra đo bằng hai thước khác nhau — ghế lùi về sau
+        /// vẫn vẽ đè lên khách đứng trước nó tận hai ô.
         /// </summary>
         PerRenderer = 0,
 
@@ -33,12 +39,16 @@ namespace DreamCafe.SystemControl.Rendering
         [SerializeField, Tooltip("Bật cho vật di chuyển — tính lại độ sâu mỗi frame.")]
         private bool _continuous = false;
 
-        [SerializeField, Tooltip("Nhích điểm chạm sàn lên/xuống khi sprite có khoảng trống hoặc bóng đổ ở đáy.")]
-        private float _groundOffset = 0f;
+        [SerializeField, Tooltip("Nhích điểm chạm sàn. Với nội thất, DecorSlot tự điền -artOffset để " +
+            "quy điểm đặt của từng mảnh về đúng tâm ô nó đứng.")]
+        private Vector2 _groundOffset = Vector2.zero;
+
+        [SerializeField, Tooltip("Thứ tự trong CÙNG một ô: 0 sàn, 1 nội thất, 3 khách. Khách để 3 nên " +
+            "ngồi lên ghế là tự nổi trên mặt ghế, không cần luật riêng.")]
+        private int _layerInCell = IsoDepth.SlotFurniture;
 
         private SpriteRenderer[] _renderers;
         private int[] _tieBreak;
-        private int? _orderOverride;
 
         private void Awake() => Cache();
 
@@ -52,6 +62,27 @@ namespace DreamCafe.SystemControl.Rendering
         }
 
         /// <summary>
+        /// Điểm chạm sàn ghim sẵn cho một số sprite, thay cho vị trí transform của nó.
+        ///
+        /// Cần vì vị trí nút hình của một mảnh nội thất là chỗ nó trông cho ĐẸP, không nhất thiết
+        /// là ô nó ĐỨNG — bộ sofa hiện đang lệch gần nửa đơn vị, tức gần hai hàng ô. Chỗ nào có
+        /// dữ liệu nói thẳng mảnh này thuộc ô nào (ghế biết ô ghế của nó) thì ghim theo dữ liệu đó
+        /// chứ đừng đoán qua transform.
+        /// </summary>
+        private Dictionary<SpriteRenderer, Vector2> _groundPins;
+
+        /// <summary>Ghim điểm chạm sàn cho một sprite. Gọi TRƯỚC <see cref="Configure"/>.</summary>
+        public void PinGround(SpriteRenderer renderer, Vector2 worldGround)
+        {
+            if (renderer == null) return;
+            _groundPins ??= new Dictionary<SpriteRenderer, Vector2>();
+            _groundPins[renderer] = worldGround;
+        }
+
+        /// <summary>Bỏ hết ghim (dựng lại món nội thất thì gọi cái này trước).</summary>
+        public void ClearGroundPins() => _groundPins?.Clear();
+
+        /// <summary>
         /// Đọc lại danh sách sprite và thứ tự tương đối gốc. Gọi lại nếu thay/thêm sprite lúc chạy.
         /// </summary>
         public void Cache()
@@ -59,7 +90,8 @@ namespace DreamCafe.SystemControl.Rendering
             _renderers = GetComponentsInChildren<SpriteRenderer>(true);
             _tieBreak = new int[_renderers.Length];
 
-            // Giữ nguyên thứ tự các mảnh trong prefab bằng cách chuẩn hoá order gốc về 0..n.
+            // Thứ tự tương đối gốc giữa các mảnh, chuẩn hoá về 0..n. CHỈ dùng cho WholeObject —
+            // xem chú thích chỗ áp dụng trong Apply().
             int min = int.MaxValue;
             for (int i = 0; i < _renderers.Length; i++)
             {
@@ -73,51 +105,56 @@ namespace DreamCafe.SystemControl.Rendering
             }
         }
 
-        /// <summary>
-        /// Ép một order cố định, bỏ qua độ sâu theo toạ độ. Dùng khi vật thể phải chen vào giữa các
-        /// mảnh của một món đồ khác — ví dụ khách ngồi thì phải nằm trên ghế nhưng dưới mặt bàn,
-        /// mà chân khách lại cao hơn chân ghế nên tính theo độ sâu sẽ ra sai thứ tự.
-        /// </summary>
-        public void SetOrderOverride(int order)
-        {
-            _orderOverride = order;
-            Apply();
-        }
-
-        /// <summary>Bỏ ép order, quay lại xếp lớp theo độ sâu.</summary>
-        public void ClearOrderOverride()
-        {
-            _orderOverride = null;
-            Apply();
-        }
-
         /// <summary>Tính và gán lại order cho toàn bộ sprite của vật thể.</summary>
         public void Apply()
         {
             if (_renderers == null || _renderers.Length == 0) Cache();
             if (_renderers == null) return;
 
-            int wholeOrder = _orderOverride ?? IsoDepth.OrderFor(transform.position.y + _groundOffset);
+            int wholeOrder = IsoDepth.OrderFor(transform.position.x + _groundOffset.x,
+                                               transform.position.y + _groundOffset.y, _layerInCell);
 
             for (int i = 0; i < _renderers.Length; i++)
             {
                 var renderer = _renderers[i];
                 if (renderer == null) continue;
 
-                int order = _mode == IsoDepthMode.WholeObject || _orderOverride.HasValue
-                    ? wholeOrder
-                    : IsoDepth.OrderFor(renderer.bounds.min.y + _groundOffset);
+                if (_mode == IsoDepthMode.WholeObject)
+                {
+                    // Mọi mảnh chung một độ sâu, nên thứ tự tương đối gốc là thứ DUY NHẤT tách
+                    // chúng ra: thanh máu vẫn phải nằm trên đầu khách.
+                    renderer.sortingOrder = wholeOrder + _tieBreak[i];
+                    continue;
+                }
 
-                renderer.sortingOrder = order + _tieBreak[i];
+                // PerRenderer thì KHÔNG cộng thứ tự gốc. Mỗi mảnh đã tự có điểm chạm sàn riêng nên
+                // công thức đủ tách chúng ra rồi; cộng thêm là để số gán tay từ thời trước lọt vào
+                // và ăn mất phần slot. Ghế trong Wood4Seats từng mang order gốc +2, cộng vào slot
+                // nội thất 1 thành 3 — đúng bằng slot của khách, nên khách ngồi lên ghế thì hai bên
+                // hoà nhau và cái ghế đè lên khách.
+                Vector2 ground;
+                if (_groundPins != null && _groundPins.TryGetValue(renderer, out var pinned))
+                {
+                    ground = pinned;
+                }
+                else
+                {
+                    Vector3 p = renderer.transform.position;
+                    ground = new Vector2(p.x + _groundOffset.x, p.y + _groundOffset.y);
+                }
+
+                renderer.sortingOrder = IsoDepth.OrderFor(ground.x, ground.y, _layerInCell);
             }
         }
 
         /// <summary>Đổi chế độ lúc chạy (chủ yếu để script setup dựng prefab).</summary>
-        public void Configure(IsoDepthMode mode, bool continuous, float groundOffset = 0f)
+        public void Configure(IsoDepthMode mode, bool continuous, Vector2 groundOffset = default,
+                              int layerInCell = IsoDepth.SlotFurniture)
         {
             _mode = mode;
             _continuous = continuous;
             _groundOffset = groundOffset;
+            _layerInCell = layerInCell;
             Apply();
         }
     }
