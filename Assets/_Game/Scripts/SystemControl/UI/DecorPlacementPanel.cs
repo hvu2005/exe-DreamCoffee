@@ -25,6 +25,7 @@ namespace DreamCafe.SystemControl.UI
         [SerializeField] private TMP_Text _wallPerspectiveButtonText;
 
         [Header("Item Cards Container")]
+        [SerializeField] private ScrollRect _scrollRect;
         [SerializeField] private Transform _cardsContainer;
         [SerializeField] private GameObject _cardTemplate;
 
@@ -35,6 +36,11 @@ namespace DreamCafe.SystemControl.UI
 
         private void Awake()
         {
+            if (_scrollRect == null)
+            {
+                _scrollRect = GetComponentInChildren<ScrollRect>(true);
+            }
+
             if (_closeButton != null)
             {
                 _closeButton.onClick.AddListener(Close);
@@ -150,6 +156,15 @@ namespace DreamCafe.SystemControl.UI
                         cardUi.Bind(item, _targetSlot, _decorController, _currencyController, Refresh);
                     }
                     _spawnedCards.Add(cardGo);
+                }
+
+                if (_cardsContainer is RectTransform rtContent)
+                {
+                    LayoutRebuilder.ForceRebuildLayoutImmediate(rtContent);
+                }
+                if (_scrollRect != null)
+                {
+                    _scrollRect.horizontalNormalizedPosition = 0f;
                 }
             }
         }

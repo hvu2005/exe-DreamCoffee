@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a272b10859a620843812a86745dda33f, type: 3}
+  m_Name: item_table_emerald_round
+  m_EditorClassIdentifier: Assembly-CSharp::DreamCafe.DataControl.DecorItem
+  _id: item_table_emerald_round
+  _displayName: "B\xE0n Tr\xF2n Ng\u1ECDc L\u1EE5c B\u1EA3o 2 Gh\u1EBF"
+  _description: "B\xE0n m\u1EB7t \u0111\xE1 c\u1EA9m th\u1EA1ch tr\u1EAFng vi\u1EC1n
+    v\xE0ng kim lo\u1EA1i cao c\u1EA5p k\xE8m 2 gh\u1EBF nhung xanh ng\u1ECDc sang
+    tr\u1ECDng."
+  _category: 0
+  _theme: 2
+  _tier: 2
+  _price: 45000
+  _requiredReputation: 50
+  _reputationBonus: 180
+  _isDefaultUnlocked: 0
+  _patienceBonusPercent: 0.08
+  _tipChanceBonus: 0.05
+  _seatingCapacity: 2
+  _moneyPerSecondBonus: 0
+  _gridFootprint: {x: 1, y: 1}
+  _extraCells: []
+  _icon: {fileID: 21300000, guid: 1a7c754c622749d40b2bfcb80aefc6f8, type: 3}
+  _prefab: {fileID: 371311918346186465, guid: d9eb4ae050940f24e8016d48f3afa85f, type: 3}
+  _defaultSpawnOffset: {x: 0, y: 0}
+  _rightWallSprite: {fileID: 0}
