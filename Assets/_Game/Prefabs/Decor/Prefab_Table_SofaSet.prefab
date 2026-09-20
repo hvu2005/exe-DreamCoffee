@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2139504518214210544}
   - component: {fileID: 6976185493264214616}
   m_Layer: 0
-  m_Name: Armchair_L
+  m_Name: Armchair_Far
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25,13 +25,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2335795009251899283}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 0.55}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: -0.5, y: -0.2, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.275}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7260408864024719116}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!212 &6976185493264214616
 SpriteRenderer:
   serializedVersion: 2
@@ -117,8 +117,8 @@ Transform:
   m_GameObject: {fileID: 3525907974338101439}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 0.55}
+  m_LocalPosition: {x: 0, y: -0.47, z: 0}
+  m_LocalScale: {x: 0.51, y: 0.51, z: 0.2805}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7260408864024719116}
@@ -277,18 +277,18 @@ MonoBehaviour:
   _blockedCells:
   - {x: 0, y: 0}
   _seats:
-  - cell: {x: 1, y: 1}
-    sitOffset: {x: 0, y: 0.5}
+  - cell: {x: 0, y: 1}
+    sitOffset: {x: -0.41, y: 0.38}
     sitAdjust: {x: 0, y: 0}
     chairArt: {fileID: 6976185493264214616}
-    label: Armchair_L
-  - cell: {x: 0, y: 1}
-    sitOffset: {x: -0.5, y: 0.25}
+    label: Armchair_Far
+  - cell: {x: 1, y: 0}
+    sitOffset: {x: 0.42, y: 0.39}
     sitAdjust: {x: 0, y: 0}
     chairArt: {fileID: 8912360874335631149}
-    label: ArmchairRL (1)
+    label: Armchair_Near
   _artRoot: {fileID: 7260408864024719116}
-  _artOffset: {x: 0.005, y: 0.33999997}
+  _artOffset: {x: 0, y: 0.58}
   _anchorOverride: {fileID: 0}
   _drawGizmos: 1
 --- !u!1 &7351960690935812495
@@ -302,7 +302,7 @@ GameObject:
   - component: {fileID: 4708544059944167491}
   - component: {fileID: 8912360874335631149}
   m_Layer: 0
-  m_Name: ArmchairRL (1)
+  m_Name: Armchair_Near
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -316,13 +316,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7351960690935812495}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -1, z: 0, w: 0}
-  m_LocalPosition: {x: -0.5, y: 0.25, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 0.55}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.525, y: -0.163, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.27500004}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7260408864024719116}
-  m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8912360874335631149
 SpriteRenderer:
   serializedVersion: 2
@@ -407,7 +407,7 @@ Transform:
   m_GameObject: {fileID: 8384184803079994321}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.005, y: 0.33999997, z: 0}
+  m_LocalPosition: {x: 0, y: 0.58, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

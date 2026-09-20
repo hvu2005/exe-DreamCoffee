@@ -8,6 +8,10 @@ namespace DreamCafe.SystemControl.Decor
     /// phải thân nội thất, nên khách tự né bàn ghế mà không cần NavMesh — vốn không tả nổi lưới
     /// isometric ở độ phân giải một ô (hai ô kề nhau chỉ cách 0.25 đơn vị theo trục y).
     ///
+    /// Vật cản ở đây có hai loại khác hẳn nhau: nội thất chiếm cả một Ô, còn vách tường đứng trên
+    /// CẠNH giữa hai ô. Vách không làm ô nào mất chỗ đứng, nó chỉ cắt lối đi giữa hai ô — nên phải
+    /// hỏi riêng bằng <see cref="ShopGrid.IsEdgeBlocked"/> chứ không quy về ô được.
+    ///
     /// Lưới isometric: bốn ô kề cạnh (±1 theo x hoặc y) là bốn hướng chéo trên màn hình, còn bốn ô
     /// kề chéo trong toạ độ ô lại là trên/dưới/trái/phải trên màn hình. Dùng cả tám để khách đi
     /// mượt, nhưng cấm cắt góc xuyên qua khe giữa hai món đồ.
@@ -76,12 +80,24 @@ namespace DreamCafe.SystemControl.Decor
 
                     if (closed.Contains(next) || !grid.IsWalkable(next)) continue;
 
-                    // Không cho lách qua khe chéo giữa hai món kê sát nhau.
-                    if (diagonal &&
-                        (!grid.IsWalkable(current + new Vector3Int(dir.x, 0, 0)) ||
-                         !grid.IsWalkable(current + new Vector3Int(0, dir.y, 0))))
+                    if (!diagonal)
                     {
-                        continue;
+                        // Vách tường đứng trên CẠNH giữa hai ô: hai ô vẫn đứng được nhưng không
+                        // bước qua nhau. Thiếu khúc này thì khách đi xuyên tường.
+                        if (grid.IsEdgeBlocked(current, next)) continue;
+                    }
+                    else
+                    {
+                        // Đi chéo là lách qua điểm góc chung của bốn ô, nên phải hỏi cả hai đường
+                        // vòng chữ L. Đòi CẢ HAI đều thông: vừa không lách qua khe chéo giữa hai
+                        // món kê sát nhau, vừa không quệt qua đầu một bức vách. Chặt tay ở đây
+                        // không làm mất đường đi — bốn hướng thẳng vẫn còn nguyên.
+                        Vector3Int viaX = current + new Vector3Int(dir.x, 0, 0);
+                        Vector3Int viaY = current + new Vector3Int(0, dir.y, 0);
+
+                        if (!grid.IsWalkable(viaX) || !grid.IsWalkable(viaY)) continue;
+                        if (grid.IsEdgeBlocked(current, viaX) || grid.IsEdgeBlocked(viaX, next)) continue;
+                        if (grid.IsEdgeBlocked(current, viaY) || grid.IsEdgeBlocked(viaY, next)) continue;
                     }
 
                     int tentative = Score(gScore, current) + (diagonal ? DiagonalCost : StraightCost);

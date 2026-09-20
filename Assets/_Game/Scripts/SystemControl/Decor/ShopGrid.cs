@@ -37,6 +37,12 @@ namespace DreamCafe.SystemControl.Decor
         [SerializeField, Tooltip("Tilemap sàn — ô nào có gạch mới là chỗ đi được. Bỏ trống thì tìm tilemap tên 'Ground'.")]
         private Tilemap _floor;
 
+        [SerializeField, Tooltip("Tilemap vách trên cạnh sau-TRÁI của ô. Bỏ trống thì tìm tilemap tên 'Wall_Left'.")]
+        private Tilemap _wallLeft;
+
+        [SerializeField, Tooltip("Tilemap vách trên cạnh sau-PHẢI của ô. Bỏ trống thì tìm tilemap tên 'Wall_Right'.")]
+        private Tilemap _wallRight;
+
         [Header("Chặn đường")]
         [SerializeField, Tooltip("Dựng NavMeshObstacle trên các ô nội thất. Mặc định TẮT — khách đã đi bằng A* trên lưới ô, bật chỉ tốn object và làm bẩn log.")]
         private bool _blockFurniture = false;
@@ -49,7 +55,15 @@ namespace DreamCafe.SystemControl.Decor
         private bool _drawGizmos = true;
 
         private readonly Dictionary<Vector3Int, ShopCellKind> _cells = new();
+
+        // Vách nằm trên CẠNH giữa hai ô chứ không chiếm ô nào, nên không nhét chung vào _cells được:
+        // một ô có vách vẫn đứng vào được, chỉ là không bước sang ô bên kia vách. Gộp mọi tầng Z về
+        // cùng một cạnh — chiều cao chỉ là hình ảnh, tường cao 1 tầng hay 3 tầng đều chặn như nhau.
+        private readonly HashSet<Vector2Int> _wallsLeft = new();
+        private readonly HashSet<Vector2Int> _wallsRight = new();
+
         private readonly List<GridOccupant> _occupants = new();
+        private bool _searchedTilemaps;
         private const string ObstaclePrefix = "Block_";
         private readonly List<GameObject> _obstacles = new();
 
@@ -126,13 +140,34 @@ namespace DreamCafe.SystemControl.Decor
         {
             if (_grid == null) _grid = FindFirstObjectByType<Grid>();
 
-            if (_floor == null)
+            // Quét tilemap đúng MỘT lần. Không có tilemap vách (scene test, hay quán chưa xây tường)
+            // là chuyện bình thường, mà EnsureGrid bị gọi trong CellCenter/WorldToCell — để nó quét
+            // lại mỗi lần là mỗi bước tìm đường kéo theo một lượt FindObjectsByType.
+            if (_searchedTilemaps) return;
+            _searchedTilemaps = true;
+
+            foreach (var tilemap in FindObjectsByType<Tilemap>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             {
-                foreach (var tilemap in FindObjectsByType<Tilemap>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-                {
-                    if (tilemap.name == "Ground") { _floor = tilemap; break; }
-                }
+                string key = Normalize(tilemap.name);
+                if (_floor == null && key == "ground") _floor = tilemap;
+                else if (_wallLeft == null && key == "wallleft") _wallLeft = tilemap;
+                else if (_wallRight == null && key == "wallright") _wallRight = tilemap;
             }
+        }
+
+        /// <summary>
+        /// Bỏ hết ký tự không phải chữ/số rồi hạ về chữ thường, để "Wall_Left", "WallLeft" và
+        /// "wall left" đều khớp. Đổi tên tilemap trong Editor là chuyện thường, mà lệch đúng một
+        /// gạch dưới thì vách lặng lẽ không chặn ai — kiểu lỗi rất khó lần ra.
+        /// </summary>
+        private static string Normalize(string name)
+        {
+            var sb = new System.Text.StringBuilder(name.Length);
+            foreach (char c in name)
+            {
+                if (char.IsLetterOrDigit(c)) sb.Append(char.ToLowerInvariant(c));
+            }
+            return sb.ToString();
         }
 
         /// <summary>
@@ -224,6 +259,34 @@ namespace DreamCafe.SystemControl.Decor
         /// <summary>Tiện cho gameplay: điểm này có đứng/đi được không.</summary>
         public bool IsWalkable(Vector3 world) => IsWalkable(WorldToCell(world));
 
+        /// <summary>Có vách dựng trên cạnh sau-trái của ô này không (cạnh ngăn nó với ô phía +y).</summary>
+        public bool HasWallLeft(Vector3Int cell) => _wallsLeft.Contains(new Vector2Int(cell.x, cell.y));
+
+        /// <summary>Có vách dựng trên cạnh sau-phải của ô này không (cạnh ngăn nó với ô phía +x).</summary>
+        public bool HasWallRight(Vector3Int cell) => _wallsRight.Contains(new Vector2Int(cell.x, cell.y));
+
+        /// <summary>
+        /// Giữa hai ô KỀ CẠNH có vách chắn không.
+        ///
+        /// Vách được sơn theo ô nhưng thuộc về cạnh: ô <c>c</c> có vách trái thì cạnh bị bịt là
+        /// cạnh giữa <c>c</c> và <c>c + (0,1)</c>; vách phải bịt cạnh giữa <c>c</c> và <c>c + (1,0)</c>.
+        /// Nên bước ngược chiều phải hỏi vách của ô ĐÍCH chứ không phải ô xuất phát.
+        ///
+        /// Hai ô không kề cạnh thì trả về false — nơi gọi phải tự tách đường chéo thành hai bước
+        /// thẳng rồi hỏi từng bước, vì đi chéo là lách qua điểm góc chung của bốn ô.
+        /// </summary>
+        public bool IsEdgeBlocked(Vector3Int from, Vector3Int to)
+        {
+            int dx = to.x - from.x;
+            int dy = to.y - from.y;
+
+            if (dx == 0 && dy == 1) return HasWallLeft(from);
+            if (dx == 0 && dy == -1) return HasWallLeft(to);
+            if (dx == 1 && dy == 0) return HasWallRight(from);
+            if (dx == -1 && dy == 0) return HasWallRight(to);
+            return false;
+        }
+
         // =====================================================================
         // DỰNG LẠI BẢN ĐỒ
         // =====================================================================
@@ -238,6 +301,7 @@ namespace DreamCafe.SystemControl.Decor
         public void RebuildCells()
         {
             _cells.Clear();
+            RebuildWalls();
             ClearObstacles();
 
             for (int i = _occupants.Count - 1; i >= 0; i--)
@@ -259,6 +323,32 @@ namespace DreamCafe.SystemControl.Decor
             // Vật cản NavMesh chỉ dựng lúc chạy: khách đã đi bằng A* trên lưới ô nên không cần tới
             // chúng, và dựng trong Edit mode thì mỗi lần xem gizmo lại đẻ ra một đống object rác.
             if (_blockFurniture && Application.isPlaying) BuildObstacles();
+        }
+
+        /// <summary>
+        /// Quét lại hai tilemap vách thành bản đồ cạnh bị bịt.
+        ///
+        /// Quét sẵn một lần thay vì hỏi thẳng tilemap mỗi lần A* xét một cạnh: một lượt tìm đường
+        /// hỏi tới hàng nghìn cạnh, mà <c>HasTile</c> còn phải dò thêm từng tầng Z.
+        /// </summary>
+        private void RebuildWalls()
+        {
+            _wallsLeft.Clear();
+            _wallsRight.Clear();
+            EnsureGrid();
+            CollectWalls(_wallLeft, _wallsLeft);
+            CollectWalls(_wallRight, _wallsRight);
+        }
+
+        private static void CollectWalls(Tilemap map, HashSet<Vector2Int> into)
+        {
+            if (map == null) return;
+
+            foreach (var cell in map.cellBounds.allPositionsWithin)
+            {
+                // Bỏ luôn tầng Z: tầng nào có vách thì cạnh đó coi như bịt.
+                if (map.HasTile(cell)) into.Add(new Vector2Int(cell.x, cell.y));
+            }
         }
 
         /// <summary>
@@ -343,11 +433,24 @@ namespace DreamCafe.SystemControl.Decor
 
         private void OnDrawGizmos()
         {
-            if (!_drawGizmos || _cells.Count == 0) return;
+            if (!_drawGizmos) return;
             EnsureGrid();
             if (_grid == null) return;
 
             Vector3 half = new(_grid.cellSize.x * 0.5f, _grid.cellSize.y * 0.5f, 0f);
+
+            // Cạnh bị vách bịt — vàng, vẽ đúng trên mép hình thoi mà bức vách đang đứng.
+            Gizmos.color = new Color(1f, 0.8f, 0.15f, 0.95f);
+            foreach (var cell in _wallsLeft)
+            {
+                Vector3 c = CellCenter(new Vector3Int(cell.x, cell.y, 0));
+                Gizmos.DrawLine(c + Vector3.left * half.x, c + Vector3.up * half.y);
+            }
+            foreach (var cell in _wallsRight)
+            {
+                Vector3 c = CellCenter(new Vector3Int(cell.x, cell.y, 0));
+                Gizmos.DrawLine(c + Vector3.up * half.y, c + Vector3.right * half.x);
+            }
 
             foreach (var pair in _cells)
             {
